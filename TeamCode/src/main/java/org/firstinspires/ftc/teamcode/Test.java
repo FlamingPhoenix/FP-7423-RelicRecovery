@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Library;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -40,7 +40,11 @@ public class Test extends LinearOpMode {
 
         waitForStart();
 
-        wheels.turnByIMU(45, .8, Direction.LEFT);
+        wheels.turnByIMU(90, .8, Direction.RIGHT);
+        Thread.sleep(1000);
+        wheels.turnByIMU(180, .8, Direction.RIGHT);
+        Thread.sleep(1000);
+        wheels.turnByIMU(90, .8, Direction.RIGHT);
         Thread.sleep(1000);
         wheels.turnByIMU(90, .8, Direction.RIGHT);
 

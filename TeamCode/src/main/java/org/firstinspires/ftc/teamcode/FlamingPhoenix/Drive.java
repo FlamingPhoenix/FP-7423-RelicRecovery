@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
+
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -8,7 +10,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.android.dx.cf.direct.DirectClassFile;
 
 /**
  * Created by HwaA1 on 10/19/2017.
@@ -78,36 +84,63 @@ public class Drive {
     //TeleOp Methods
 
 
+
+
     //Autonomous Methods
 
     public void turnByIMU(int degree, double speed, Direction direction) {
-        double startAngle = angles.firstAngle;
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double raw = angles.firstAngle;
+        double startAngle = translateAngle((float) raw, direction);
         double targetAngle = startAngle + (direction == Direction.RIGHT ? degree * -1 : degree);
 
+        Log.d("[Phoenix]","[Phoenix]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
+
         if(direction == Direction.LEFT) {
-            while (angles.firstAngle < targetAngle && opm.opModeIsActive()) {
+            while (translateAngle((float) raw, direction) < targetAngle && opm.opModeIsActive()) {
                 fr.setPower(speed);
                 br.setPower(speed);
                 fl.setPower(-speed);
                 bl.setPower(-speed);
 
-                angles = imu.getAngularOrientation();
+                Log.d("[Phoenix]","[Phoenix0]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
+
+                opm.telemetry.addData("angle", translateAngle((float) raw, direction));
+                opm.telemetry.update();
             }
         }
         else if(direction == Direction.RIGHT) {
-            while (angles.firstAngle > targetAngle && opm.opModeIsActive()) {
+            while (translateAngle((float) raw, direction) > targetAngle && opm.opModeIsActive()) {
                 fr.setPower(-speed);
                 br.setPower(-speed);
                 fl.setPower(speed);
                 bl.setPower(speed);
 
-                angles = imu.getAngularOrientation();
+                Log.d("[Phoenix]","[Phoenix1]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
+
+                opm.telemetry.addData("angle", translateAngle((float) raw, direction));
+                opm.telemetry.update();
             }
         }
         fr.setPower(0);
         br.setPower(0);
         fl.setPower(0);
         bl.setPower(0);
+
+    }
+
+    private double translateAngle(float s, Direction d) {
+        Orientation rawOrientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+         if(s > 0 && d == Direction.LEFT)
+            return rawOrientation.firstAngle >= 0 ? rawOrientation.firstAngle : 360 + rawOrientation.firstAngle;
+
+         else if ( s < 0 && d == Direction.RIGHT)
+             return rawOrientation.firstAngle >= 0 ? rawOrientation.firstAngle : 360 + rawOrientation.firstAngle;
+
+         else
+            return rawOrientation.firstAngle;
 
     }
 
