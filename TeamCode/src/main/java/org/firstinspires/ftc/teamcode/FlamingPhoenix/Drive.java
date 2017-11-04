@@ -148,7 +148,7 @@ public class Drive {
 
     //Autonomous Methods
 
-    public void turnByIMU(int degree, double speed, Direction direction) {
+    public void turnByIMU(int degree, double power, Direction direction) {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double raw = angles.firstAngle;
@@ -157,12 +157,32 @@ public class Drive {
 
         Log.d("[Phoenix]","[Phoenix]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
 
+        long starttime = 0;
+        long elapsedtime = 0;
+
+        double speed = 0;
+
+        boolean timeset = false;
+
         if(direction == Direction.LEFT) {
             while (translateAngle((float) raw, direction) < targetAngle && opm.opModeIsActive()) {
-                fr.setPower(speed);
-                br.setPower(speed);
-                fl.setPower(-speed);
-                bl.setPower(-speed);
+
+                if(translateAngle((float)(raw), direction) > 5) {
+
+                    if(!timeset) {
+                        starttime = System.currentTimeMillis();
+                    }
+
+                    elapsedtime = (System.currentTimeMillis() - starttime) / 1000;
+                    double currentangle = translateAngle((float) raw, direction);
+
+                    speed = (Math.abs(currentangle - startAngle)) / elapsedtime;
+                }
+
+                fr.setPower(power);
+                br.setPower(power);
+                fl.setPower(-power);
+                bl.setPower(-power);
 
                 Log.d("[Phoenix]","[Phoenix0]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
 
@@ -171,11 +191,24 @@ public class Drive {
             }
         }
         else if(direction == Direction.RIGHT) {
+
+            if(translateAngle((float)(raw), direction) > 5) {
+
+                if(!timeset) {
+                    starttime = System.currentTimeMillis();
+                }
+
+                elapsedtime = (System.currentTimeMillis() - starttime) / 1000;
+                double currentangle = translateAngle((float) raw, direction);
+
+                speed = (Math.abs(currentangle - startAngle)) / elapsedtime;
+            }
+
             while (translateAngle((float) raw, direction) > targetAngle && opm.opModeIsActive()) {
-                fr.setPower(-speed);
-                br.setPower(-speed);
-                fl.setPower(speed);
-                bl.setPower(speed);
+                fr.setPower(-power);
+                br.setPower(-power);
+                fl.setPower(power);
+                bl.setPower(power);
 
                 Log.d("[Phoenix]","[Phoenix1]" + Double.toString(translateAngle((float) raw, direction)) + " and here is target " + Double.toString(targetAngle));
 
