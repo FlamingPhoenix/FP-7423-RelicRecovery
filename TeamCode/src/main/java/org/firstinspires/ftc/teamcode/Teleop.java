@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.Arm;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
 
 /**
@@ -18,16 +19,18 @@ public class Teleop extends OpMode {
     DcMotor fr;
     DcMotor fl;
 
-    Servo base;
+    Servo shoulder;
     Servo elbow;
     Servo wrist;
 
     double elbowPosition;
-    double basePosition = .5;
+    double shoulderPosition = .5;
 
     Drive wheels;
 
     BNO055IMU imu;
+
+    Arm farrm;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -43,15 +46,16 @@ public class Teleop extends OpMode {
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
-        base = hardwareMap.servo.get("base");
+        shoulder = hardwareMap.servo.get("shoulder");
         elbow = hardwareMap.servo.get("elbow");
         wrist = hardwareMap.servo.get("wrist");
 
-        elbowPosition = .8;
 
-        base.setPosition(basePosition);
-        elbow.setPosition(elbowPosition);
+        shoulder.setPosition(1);
+        elbow.setPosition(0);
         wrist.setPosition(0);
+
+        farrm = new Arm(shoulder, elbow, wrist);
 
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
@@ -60,6 +64,8 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+        farrm.moveArm(gamepad2);
 
     }
 }

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
+import android.graphics.Path;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,12 +17,13 @@ public class Arm {
     Servo elbow;
     Servo wrist;
 
+    OpMode op;
 
-
-    public Arm(Servo s, Servo e, Servo w) {
+    public Arm(Servo s, Servo e, Servo w, OpMode o) {
         shoulder = s;
         elbow = e;
         wrist = w;
+        op = o;
     }
 
     public double shoulderToDegree() {
@@ -37,9 +41,9 @@ public class Arm {
     public void moveArm(Gamepad gamepad2) {
 
         double elbowPosition = elbow.getPosition();
-        if(gamepad2.dpad_up) {
+        if(gamepad2.dpad_down) {
             elbowPosition += .001;
-        } else if(gamepad2.dpad_down){
+        } else if(gamepad2.dpad_up){
             elbowPosition -= .001;
         } else {}
         elbow.setPosition(elbowPosition);
@@ -54,13 +58,17 @@ public class Arm {
 
         double x = elbow.getPosition();
 
-        double basePos = (.5 - (x / 2)) + shoulderPosition;
-        if(basePos > 1) {
-            basePos = 1;
-        } else if(basePos < 0) {
-            basePos = 0;
+        double shoulderPos = (.45 - (x / 2)) + shoulderPosition;
+        if(shoulderPos > 1) {
+            shoulderPos = 1;
+        } else if(shoulderPos < 0) {
+            shoulderPos = 0;
         } else {}
 
-        shoulder.setPosition(basePos);
+        op.telemetry.addData("shoulderPos", shoulderPos);
+        op.telemetry.addData("x", x);
+        op.telemetry.update();
+
+        shoulder.setPosition(shoulderPos);
     }
 }

@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.Arm;
+
 /**
  * Created by HwaA1 on 11/2/2017.
  */
@@ -22,6 +24,8 @@ public class Farrm extends OpMode {
     //Servo lift1;
     //Servo grabber;
 
+    Arm arm;
+
     @Override
     public void init() {
         shoulder = hardwareMap.servo.get("shoulder");
@@ -34,7 +38,7 @@ public class Farrm extends OpMode {
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(750, 2250);
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(899, 2105);
         servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
 
         ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
@@ -56,6 +60,8 @@ public class Farrm extends OpMode {
         //lift1.setPosition(0);
         //grabber.setPosition(0);
 
+        arm = new Arm(shoulder, elbow, wrist);
+
         telemetry.addData("shoulder", shoulder.getPosition());
         telemetry.addData("elbow", elbow.getPosition());
         telemetry.update();
@@ -64,7 +70,17 @@ public class Farrm extends OpMode {
 
     @Override
     public void loop() {
-        shoulder.setPosition(1);
+        /*double shoulderPos = shoulder.getPosition();
+
+        if(gamepad1.dpad_down) {
+            shoulderPos -= .001;
+        } else if(gamepad1.dpad_up) {
+            shoulderPos += .001;
+        }
+
+        shoulder.setPosition(shoulderPos);
+
+        //shoulder.setPosition(1);
 
         double elbowPos = elbow.getPosition();
 
@@ -74,7 +90,9 @@ public class Farrm extends OpMode {
             elbowPos += .005;
         } else {}
 
-        elbow.setPosition(elbowPos);
+        elbow.setPosition(elbowPos);*/
+
+        arm.moveArm(gamepad1);
 
         telemetry.addData("shoulder", shoulder.getPosition());
         telemetry.addData("elbow", elbow.getPosition());
