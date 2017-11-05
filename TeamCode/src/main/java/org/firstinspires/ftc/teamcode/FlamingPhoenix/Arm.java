@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
 import android.graphics.Path;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -46,13 +47,20 @@ public class Arm {
         } else if(gamepad2.dpad_up){
             elbowPosition -= .001;
         } else {}
+
         elbow.setPosition(elbowPosition);
 
         double shoulderPosition = shoulder.getPosition();
+        Log.d("[Phoenix]", "read shoulder position:" + shoulderPosition);
+
         if(gamepad2.a) {
             shoulderPosition += .001;
+
+            Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else if(gamepad2.y){
             shoulderPosition -= .001;
+
+            Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else {}
         //base.setPosition(basePosition);
 
@@ -67,8 +75,9 @@ public class Arm {
 
         op.telemetry.addData("shoulderPos", shoulderPos);
         op.telemetry.addData("x", x);
+        op.telemetry.addData("shoulderPosition", shoulderPosition);
         op.telemetry.update();
-
+        Log.d("[Phoenix]", "set shoulder position" + shoulderPos);
         shoulder.setPosition(shoulderPos);
     }
 }

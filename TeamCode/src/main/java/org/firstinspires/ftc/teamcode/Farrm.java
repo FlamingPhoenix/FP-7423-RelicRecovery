@@ -60,7 +60,7 @@ public class Farrm extends OpMode {
         //lift1.setPosition(0);
         //grabber.setPosition(0);
 
-        arm = new Arm(shoulder, elbow, wrist);
+        arm = new Arm(shoulder, elbow, wrist, this);
 
         telemetry.addData("shoulder", shoulder.getPosition());
         telemetry.addData("elbow", elbow.getPosition());

@@ -35,6 +35,9 @@ public class Drive {
 
     LinearOpMode opm;
 
+    final int PPR = 1120;
+    final int wheelDiameter = 4;
+
     public Drive(DcMotor frmotor, DcMotor brmotor, DcMotor flmotor, DcMotor blmotor, BNO055IMU im, OpMode opmode) {
         fr = frmotor;
         br = brmotor;
@@ -147,6 +150,67 @@ public class Drive {
     }
 
     //Autonomous Methods
+
+    public void drive(double d, Direction direction, double power, LinearOpMode opMode) throws InterruptedException {
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Thread.sleep(30);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Thread.sleep(20);
+
+        int pulseNeeded = (int) Math.round(((double) PPR * d) / (wheelDiameter * Math.PI));
+
+        if (direction == Direction.BACKWARD) {
+            pulseNeeded = pulseNeeded * -1;
+            power = Math.abs(power) * -1;
+        } else
+            power = Math.abs(power);
+
+
+        int currentEncoderTick = fr.getCurrentPosition();
+        while ((opMode.opModeIsActive()) && (Math.abs(currentEncoderTick) < Math.abs(pulseNeeded))) {
+            bl.setPower(power);
+            br.setPower(power);
+            fl.setPower(power);
+            fr.setPower(power);
+
+            currentEncoderTick = fr.getCurrentPosition();
+        }
+
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        fr.setPower(0);
+    }
+
+    public void strafe(int distance, double power, Direction direction, LinearOpMode opMode) throws InterruptedException {
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+
+        int pulseNeeded = (int) Math.round((PPR * distance) / (wheelDiameter * Math.PI));
+
+        pulseNeeded = (int) Math.round((double) pulseNeeded/0.5); //the distance is around .5 the normal
+
+        while(((Math.abs(fr.getCurrentPosition())) < pulseNeeded) && opMode.opModeIsActive()) {
+            if (direction == Direction.LEFT) {
+                fl.setPower(-power);
+                bl.setPower(power);
+                fr.setPower(power);
+                br.setPower(-power);
+            } else {
+                fl.setPower(power);
+                bl.setPower(-power);
+                fr.setPower(-power);
+                br.setPower(power);
+            }
+        }
+
+        fl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
+    }
 
     public void turnByIMU(int degree, double power, Direction direction) {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
