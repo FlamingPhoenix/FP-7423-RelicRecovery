@@ -20,6 +20,8 @@ public class Arm {
 
     OpMode op;
 
+    double imaginaryShoulderPosition = 1;
+
     public Arm(Servo s, Servo e, Servo w, OpMode o) {
         shoulder = s;
         elbow = e;
@@ -42,31 +44,40 @@ public class Arm {
     public void moveArm(Gamepad gamepad2) {
 
         double elbowPosition = elbow.getPosition();
+        //Log.d("[Phoenix]", "read elbow position:" + elbowPosition);
+
         if(gamepad2.dpad_down) {
-            elbowPosition += .001;
+            elbowPosition += .002;
+
+            //Log.d("[Phoenix]", "move down elbow position:" + elbowPosition);
         } else if(gamepad2.dpad_up){
-            elbowPosition -= .001;
+            elbowPosition -= .002;
+
+            //Log.d("[Phoenix]", "move up elbow position:" + elbowPosition);
         } else {}
 
+        //Log.d("[Phoenix]", "set elbow position:" + elbowPosition);
         elbow.setPosition(elbowPosition);
 
-        double shoulderPosition = shoulder.getPosition();
-        Log.d("[Phoenix]", "read shoulder position:" + shoulderPosition);
+        //double shoulderPosition = shoulder.getPosition();
+        //Log.d("[Phoenix]", "read shoulder position:" + shoulderPosition);
 
         if(gamepad2.a) {
-            shoulderPosition += .001;
+            imaginaryShoulderPosition += .002;
 
-            Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
+            //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else if(gamepad2.y){
-            shoulderPosition -= .001;
+            imaginaryShoulderPosition -= .002;
 
-            Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
+            //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else {}
         //base.setPosition(basePosition);
 
         double x = elbow.getPosition();
 
-        double shoulderPos = (.45 - (x / 2)) + shoulderPosition;
+        double shoulderPos = (x / 2) + imaginaryShoulderPosition - .5;
+        Log.d("[Phoenix]", "shoulderPos:" + shoulderPos);
+
         if(shoulderPos > 1) {
             shoulderPos = 1;
         } else if(shoulderPos < 0) {
@@ -75,9 +86,9 @@ public class Arm {
 
         op.telemetry.addData("shoulderPos", shoulderPos);
         op.telemetry.addData("x", x);
-        op.telemetry.addData("shoulderPosition", shoulderPosition);
+        //op.telemetry.addData("shoulderPosition ", shoulderPosition);
         op.telemetry.update();
-        Log.d("[Phoenix]", "set shoulder position" + shoulderPos);
+        //Log.d("[Phoenix]", "set shoulder position " + shoulderPos);
         shoulder.setPosition(shoulderPos);
     }
 }

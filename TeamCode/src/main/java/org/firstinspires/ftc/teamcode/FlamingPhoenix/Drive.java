@@ -88,7 +88,7 @@ public class Drive {
 
     //TeleOp Methods
 
-    public void drive(float x1, float y1, float x2) {
+    public void drive(float x1, float y1, float x2, Gamepad gamepad) {
         x1 = (float) scaleInput(x1);
         y1 = (float) scaleInput(y1 * -1);
 
@@ -110,10 +110,17 @@ public class Drive {
         backLeft = Range.clip(backLeft, -1, 1);
         backRight = Range.clip(backRight, -1, 1);
 
-        fl.setPower(frontLeft / 2);
-        fr.setPower(frontRight / 2);
-        bl.setPower(backLeft / 2);
-        br.setPower(backRight / 2);
+        if(gamepad.right_bumper) {
+            frontLeft /= 2;
+            frontRight /= 2;
+            backLeft /= 2;
+            backRight /= 2;
+        }
+
+        fl.setPower(frontLeft);
+        fr.setPower(frontRight);
+        bl.setPower(backLeft);
+        br.setPower(backRight);
     }
 
     private double scaleInput(double dVal) {

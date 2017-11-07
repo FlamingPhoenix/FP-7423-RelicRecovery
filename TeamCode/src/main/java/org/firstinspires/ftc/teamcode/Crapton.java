@@ -49,13 +49,15 @@ public class Crapton extends LinearOpMode {
 
         grabber.setPosition(0);
 
-        wheels.drive(22, Direction.FORWARD, 1, this);
+        wheels.drive(22, Direction.FORWARD, .7, this);
         wheels.strafe(6, .5, Direction.RIGHT, this);
         wheels.drive(10, Direction.FORWARD, .6, this);
 
         grabber.setPosition(1);
 
         Thread.sleep(1000);
+
+        wheels.drive(2, Direction.BACKWARD, .5, this);
     }
 
 

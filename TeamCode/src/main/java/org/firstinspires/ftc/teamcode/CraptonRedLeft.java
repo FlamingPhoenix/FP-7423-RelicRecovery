@@ -54,6 +54,8 @@ public class CraptonRedLeft extends LinearOpMode {
 
         grabber.setPosition(1);
         Thread.sleep(1000);
+
+        wheels.drive(2, Direction.BACKWARD, .5, this);
     }
 }
 

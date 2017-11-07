@@ -48,12 +48,14 @@ public class CraptonRR extends LinearOpMode {
 
         grabber.setPosition(0);
 
-        wheels.drive(22, Direction.FORWARD, 1, this);
-        wheels.strafe(10, .5, Direction.LEFT, this);
+        wheels.drive(22, Direction.FORWARD, .7, this);
+        wheels.strafe(8,0.5, Direction.LEFT, this);
         wheels.drive(10, Direction.FORWARD, .6, this);
 
         grabber.setPosition(1);
 
         Thread.sleep(1000);
+
+        wheels.drive(2, Direction.BACKWARD, .5, this);
     }
 }

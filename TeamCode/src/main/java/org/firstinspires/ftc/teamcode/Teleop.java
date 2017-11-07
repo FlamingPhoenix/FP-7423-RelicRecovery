@@ -74,7 +74,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
         if(gamepad1.a) {
             grabber.setPosition(0);

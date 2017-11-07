@@ -30,6 +30,7 @@ public class CraptonBlueRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         bl = hardwareMap.dcMotor.get("backleft");
         br = hardwareMap.dcMotor.get("backright");
+
         fl = hardwareMap.dcMotor.get("frontleft");
         fr = hardwareMap.dcMotor.get("frontright");
 
@@ -55,5 +56,7 @@ public class CraptonBlueRight extends LinearOpMode {
 
         grabber.setPosition(1);
         Thread.sleep(1000);
+
+        wheels.drive(2, Direction.BACKWARD, .5, this);
     }
 }
