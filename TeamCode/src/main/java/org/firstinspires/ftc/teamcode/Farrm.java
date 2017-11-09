@@ -46,15 +46,15 @@ public class Farrm extends OpMode {
         PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(899, 2105);
         elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
 
-        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        /*ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
         int wristServoPort = wrist.getPortNumber();
-        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(899, 2105);
-        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);*/
 
 
         shoulder.setPosition(1);
         elbow.setPosition(1);
-        wrist.setPosition(.5);
+        wrist.setPosition(1);
         thumb.setPosition(0);
         finger.setPosition(0);
         //lift1.setPosition(0);

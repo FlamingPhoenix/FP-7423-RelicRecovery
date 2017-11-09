@@ -46,11 +46,11 @@ public class Arm {
         double elbowPosition = elbow.getPosition();
         //Log.d("[Phoenix]", "read elbow position:" + elbowPosition);
 
-        if(gamepad2.dpad_down) {
+        if(gamepad2.left_stick_y < -.5) {
             elbowPosition += .002;
 
             //Log.d("[Phoenix]", "move down elbow position:" + elbowPosition);
-        } else if(gamepad2.dpad_up){
+        } else if(gamepad2.left_stick_y > .5){
             elbowPosition -= .002;
 
             //Log.d("[Phoenix]", "move up elbow position:" + elbowPosition);
@@ -62,11 +62,11 @@ public class Arm {
         //double shoulderPosition = shoulder.getPosition();
         //Log.d("[Phoenix]", "read shoulder position:" + shoulderPosition);
 
-        if(gamepad2.a) {
+        if(gamepad2.y) {
             imaginaryShoulderPosition += .002;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
-        } else if(gamepad2.y){
+        } else if(gamepad2.a){
             imaginaryShoulderPosition -= .002;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
@@ -84,11 +84,23 @@ public class Arm {
             shoulderPos = 0;
         } else {}
 
+        shoulder.setPosition(shoulderPos);
+
+
+        double wristPosition = wrist.getPosition();
+
+        if(gamepad2.dpad_up)
+            wristPosition += .01;
+        else if(gamepad2.dpad_down)
+            wristPosition -= .01;
+
+        wrist.setPosition(wristPosition);
+
+
         op.telemetry.addData("shoulderPos", shoulderPos);
         op.telemetry.addData("x", x);
         //op.telemetry.addData("shoulderPosition ", shoulderPosition);
         op.telemetry.update();
         //Log.d("[Phoenix]", "set shoulder position " + shoulderPos);
-        shoulder.setPosition(shoulderPos);
     }
 }
