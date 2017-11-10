@@ -27,6 +27,7 @@ public class Teleop extends OpMode {
     Servo elbow;
     Servo wrist;
     Servo grabber;
+    Servo grabber2;
 
     double elbowPosition;
     double shoulderPosition = .5;
@@ -55,6 +56,7 @@ public class Teleop extends OpMode {
         elbow = hardwareMap.servo.get("elbow");
         wrist = hardwareMap.servo.get("wrist");
         grabber = hardwareMap.servo.get("finger");
+        grabber2 = hardwareMap.servo.get("finger2");
 
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
@@ -65,6 +67,7 @@ public class Teleop extends OpMode {
         elbow.setPosition(0);
         wrist.setPosition(0);
         grabber.setPosition(1);
+        grabber2.setPosition(1);
 
         farrm = new Arm(shoulder, elbow, wrist, this);
 
@@ -76,9 +79,14 @@ public class Teleop extends OpMode {
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
-        if(gamepad1.a) {
+        if(gamepad2.left_trigger > .5) {
             grabber.setPosition(0);
-        } else if (gamepad1.y)
+        } else if (gamepad2.right_trigger > .5)
+            grabber.setPosition(1);
+
+        if(gamepad2.left_bumper) {
+            grabber2.setPosition(0);
+        } else if (gamepad2.right_bumper)
             grabber.setPosition(1);
 
 
