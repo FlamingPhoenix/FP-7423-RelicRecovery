@@ -19,10 +19,9 @@ public class Farrm extends OpMode {
     Servo shoulder;
     Servo elbow;
     Servo wrist;
-    Servo thumb;
+    Servo wristation;
     Servo finger;
-    //Servo lift1;
-    //Servo grabber;
+
 
     Arm arm;
 
@@ -31,14 +30,13 @@ public class Farrm extends OpMode {
         shoulder = hardwareMap.servo.get("shoulder");
         elbow = hardwareMap.servo.get("elbow");
         wrist = hardwareMap.servo.get("wrist");
-        thumb = hardwareMap.servo.get("thumb");
-        finger = hardwareMap.servo.get("finger");
-        //lift1 = hardwareMap.servo.get("lift1");
-        //grabber = hardwareMap.servo.get("grabber");
+        finger  = hardwareMap.servo.get("finger");
+        wristation = hardwareMap.servo.get("wristation");
+
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(899, 2105);
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(899, 1860);
         servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
 
         ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
@@ -46,21 +44,20 @@ public class Farrm extends OpMode {
         PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(899, 2105);
         elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
 
-        /*ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
         int wristServoPort = wrist.getPortNumber();
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
-        wristController.setServoPwmRange(wristServoPort, wristPwmRange);*/
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
 
+        double shoulderInitialize = .33;
 
-        shoulder.setPosition(1);
-        elbow.setPosition(1);
+        shoulder.setPosition(shoulderInitialize);
+        elbow.setPosition(.8);
         wrist.setPosition(1);
-        thumb.setPosition(0);
-        finger.setPosition(0);
-        //lift1.setPosition(0);
-        //grabber.setPosition(0);
+        wristation.setPosition(.5);
+        finger.setPosition(1);
 
-        arm = new Arm(shoulder, elbow, wrist, this);
+        arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
 
         telemetry.addData("shoulder", shoulder.getPosition());
         telemetry.addData("elbow", elbow.getPosition());
