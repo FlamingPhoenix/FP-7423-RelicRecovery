@@ -91,6 +91,10 @@ public class Farrm extends OpMode {
 
         arm.moveArm(gamepad1);
 
+        if (gamepad2.y) {
+            arm.placeRelic();
+        }
+
         telemetry.addData("shoulder", shoulder.getPosition());
         telemetry.addData("elbow", elbow.getPosition());
         telemetry.update();
