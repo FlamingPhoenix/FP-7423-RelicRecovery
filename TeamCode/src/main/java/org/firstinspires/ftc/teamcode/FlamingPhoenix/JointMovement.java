@@ -6,6 +6,6 @@ package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
 public enum JointMovement {
     FORWARD,
-    BACKWORD,
+    BACKWARD,
     STILL
 }

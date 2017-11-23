@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -64,9 +62,9 @@ public class Arm {
         double originalElbowPosition = elbow.getPosition();
 
         if(gamepad.right_stick_y > .5) {
-            elbowPosition += .001;
+            elbowPosition += .003;
         } else if(gamepad.right_stick_y < -.5){
-            elbowPosition -= .001;
+            elbowPosition -= .003;
         } else {}
 
         double diffEl = elbowPosition - originalElbowPosition;
@@ -84,11 +82,11 @@ public class Arm {
         double originalShould = imaginaryShoulderPosition;
 
         if(gamepad.left_stick_y > .5) {
-            imaginaryShoulderPosition += .001;
+            imaginaryShoulderPosition += .003;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else if(gamepad.left_stick_y < -.5){
-            imaginaryShoulderPosition -= .001;
+            imaginaryShoulderPosition -= .003;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
         } else {}
@@ -137,18 +135,18 @@ public class Arm {
 
 
 
-        op.telemetry.addData("shoulderPos", shoulderPos);
-        op.telemetry.addData("x", x);
+        //op.telemetry.addData("shoulderPos", shoulderPos);
+        //op.telemetry.addData("x", x);
         //op.telemetry.addData("shoulderPosition ", shoulderPosition);
-        op.telemetry.update();
+        //op.telemetry.update();
         //Log.d("[Phoenix]", "set shoulder position " + shoulderPos);
     }
 
-    public void moveArm(JointMovement shoulderMove, JointMovement elbowMove, JointMovement wristMove, WristDirection wristationDirection, GraberMovement grabber, MoveSpeed speed) {
+    public void moveArm(JointMovement shoulderMove, JointMovement elbowMove, JointMovement wristMove, WristDirection wristationDirection, GrabberMovement grabber, MoveSpeed speed) {
         double elbowPosition = elbow.getPosition();
         double originalElbowPosition = elbow.getPosition();
 
-        if(elbowMove == JointMovement.BACKWORD) {
+        if(elbowMove == JointMovement.BACKWARD) {
             elbowPosition += speed == MoveSpeed.SLOW ? 0.01 : speed == MoveSpeed.MEDIUM ? 0.02 : 0.03;
         } else if(elbowMove == JointMovement.FORWARD){
             elbowPosition -= speed == MoveSpeed.SLOW ? 0.01 : speed == MoveSpeed.MEDIUM ? 0.02 : 0.03;
@@ -160,7 +158,7 @@ public class Arm {
         double rotationPos = wristation.getPosition();
         if(wristationDirection == WristDirection.CLOCKWISE) {
             rotationPos += .0025;
-        } else if(wristationDirection == WristDirection.COUNTERCLOKWISE) {
+        } else if(wristationDirection == WristDirection.COUNTERCLOCKWISE) {
             rotationPos -= .0025;
         }
         wristation.setPosition(rotationPos);
@@ -172,7 +170,7 @@ public class Arm {
             imaginaryShoulderPosition += .001;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
-        } else if(shoulderMove == JointMovement.BACKWORD){
+        } else if(shoulderMove == JointMovement.BACKWARD){
             imaginaryShoulderPosition -= .001;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
@@ -197,7 +195,7 @@ public class Arm {
 
         double wristPosition = wrist.getPosition();
         double origWristPosition = wristPosition;
-        if(wristMove == JointMovement.BACKWORD) {
+        if(wristMove == JointMovement.BACKWARD) {
             wristPosition = wristPosition - (diffEl/2) - shoulderDifference + .005;
         }
         else if(wristMove == JointMovement.FORWARD) {
@@ -213,20 +211,12 @@ public class Arm {
         wrist.setPosition(wristPosition);
 
         double fingerPos = finger.getPosition();
-        if(grabber == GraberMovement.OPEN) {
+        if(grabber == GrabberMovement.OPEN) {
             fingerPos = 1;
-        } else if(grabber == GraberMovement.CLOSE) {
+        } else if(grabber == GrabberMovement.CLOSE) {
             fingerPos = 0;
         }
         finger.setPosition(fingerPos);
-
-
-
-        op.telemetry.addData("shoulderPos", shoulderPos);
-        op.telemetry.addData("x", x);
-        //op.telemetry.addData("shoulderPosition ", shoulderPosition);
-        op.telemetry.update();
-        //Log.d("[Phoenix]", "set shoulder position " + shoulderPos);
     }
 
     public void moveArm(double shoulderPost, double elbowPost, double wristPost, double wristationPost) {
@@ -298,27 +288,41 @@ public class Arm {
 
     //This is meant to be called from Teleop loop.  It will raise the shoulder to a certain height, then extend elbow
     public void placeRelic() {
-        if (shoulder.getPosition() < 0.8) {
-            moveArm(JointMovement.FORWARD, JointMovement.STILL, JointMovement.STILL, WristDirection.STILL, GraberMovement.STILL, MoveSpeed.SLOW);
+        if (wrist.getPosition() < .65) {
+            moveArm(JointMovement.STILL, JointMovement.STILL, JointMovement.FORWARD, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.SLOW);
+        }
+        else if (wrist.getPosition() < 0.65) {
+            moveArm(JointMovement.STILL, JointMovement.STILL, JointMovement.BACKWARD, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.SLOW);
+        }
+
+        if (imaginaryShoulderPosition < 0.4) {
+            moveArm(JointMovement.FORWARD, JointMovement.STILL, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.FAST);
             return;
         }
-        else if (shoulder.getPosition() > 0.8){
-            moveArm(JointMovement.BACKWORD, JointMovement.STILL, JointMovement.STILL, WristDirection.STILL, GraberMovement.STILL, MoveSpeed.SLOW);
+        else if (imaginaryShoulderPosition < 0.5){
+            moveArm(JointMovement.BACKWARD, JointMovement.STILL, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.SLOW);
             return;
         }
-        else if (elbow.getPosition() < 0.7 ) {
-            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GraberMovement.STILL, MoveSpeed.FAST);
+        else if (elbow.getPosition() > 0.5) {
+            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.FAST);
             return;
         }
-        else if (elbow.getPosition() < 0.9 ) {
-            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GraberMovement.STILL, MoveSpeed.MEDIUM);
+        else if (elbow.getPosition() > 0.2 ) {
+            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.MEDIUM);
 
             return;
         }
-        else if (elbow.getPosition() < 1 ) {
-            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GraberMovement.STILL, MoveSpeed.SLOW);
+        else if (elbow.getPosition() > 0.0 ) {
+            moveArm(JointMovement.STILL, JointMovement.FORWARD, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.SLOW);
+            return;
+        }
+        else if (wristation.getPosition() < 1 ) {
+            moveArm(JointMovement.STILL, JointMovement.STILL, JointMovement.STILL, WristDirection.CLOCKWISE, GrabberMovement.STILL, MoveSpeed.SLOW);
+            return;
+        }
+        else if (wristation.getPosition() > 1 ) {
+            moveArm(JointMovement.STILL, JointMovement.STILL, JointMovement.STILL, WristDirection.COUNTERCLOCKWISE, GrabberMovement.STILL, MoveSpeed.SLOW);
             return;
         }
     }
-
 }

@@ -6,6 +6,6 @@ package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
 public enum WristDirection {
     CLOCKWISE,
-    COUNTERCLOKWISE,
+    COUNTERCLOCKWISE,
     STILL
 }

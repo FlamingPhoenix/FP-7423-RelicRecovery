@@ -23,11 +23,19 @@ public class Teleop extends OpMode {
     DcMotor fr;
     DcMotor fl;
 
+    DcMotor lift;
+
     Servo shoulder;
     Servo elbow;
     Servo wrist;
+    Servo wristation;
+    Servo finger;
+
     Servo grabber;
     Servo grabber2;
+
+    Servo elevator;
+
 
     double elbowPosition;
     double shoulderPosition = .5;
@@ -36,7 +44,9 @@ public class Teleop extends OpMode {
 
     BNO055IMU imu;
 
-    Arm farrm;
+    Arm arm;
+
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -48,6 +58,11 @@ public class Teleop extends OpMode {
         fl = hardwareMap.dcMotor.get("frontleft");
         fr = hardwareMap.dcMotor.get("frontright");
 
+        lift = hardwareMap.dcMotor.get("lift");
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
@@ -55,8 +70,13 @@ public class Teleop extends OpMode {
         shoulder = hardwareMap.servo.get("shoulder");
         elbow = hardwareMap.servo.get("elbow");
         wrist = hardwareMap.servo.get("wrist");
-        grabber = hardwareMap.servo.get("finger");
-        grabber2 = hardwareMap.servo.get("finger2");
+        wristation = hardwareMap.servo.get("wristation");
+        finger = hardwareMap.servo.get("finger");
+
+        grabber = hardwareMap.servo.get("grabber");
+        grabber2 = hardwareMap.servo.get("grabber2");
+
+        elevator = hardwareMap.servo.get("elevator");
 
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
@@ -68,12 +88,33 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(899, 2100);
         grabberController.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
-        shoulder.setPosition(1);
+        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        int shoulderServoPort = shoulder.getPortNumber();
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
+        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
 
-        elbow.setPosition(0);
+        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
+        int elbowServoPort = elbow.getPortNumber();
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(899, 2105);
+        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
+
+        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        int wristServoPort = wrist.getPortNumber();
+        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+
+        double shoulderInitialize = 0;
+
+        shoulder.setPosition(shoulderInitialize);
+
+        elbow.setPosition(.8);
         wrist.setPosition(0);
-        grabber.setPosition(1);
-        grabber2.setPosition(1);
+        wristation.setPosition(.5);
+        finger.setPosition(1);
+
+        elevator.setPosition(.5);
+
+        arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
 
         //farrm = new Arm(shoulder, elbow, wrist, ,this);
 
@@ -85,6 +126,28 @@ public class Teleop extends OpMode {
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
+        if(gamepad2.dpad_up) {
+            lift.setPower(.4);
+        } else if(gamepad2.dpad_down) {
+            lift.setPower(-.4);
+        } else {
+            lift.setPower(0);
+        }
+
+        if(gamepad2.y) {
+            elevator.setPosition(0);
+        } else if(gamepad2.a) {
+            elevator.setPosition(1);
+        } else {
+            elevator.setPosition(.5);
+        }
+
+        arm.moveArm(gamepad2);
+
+        /*if (gamepad2.y) {
+            arm.placeRelic();
+        }*/
+
         if(gamepad1.right_trigger > .5) {
             grabber.setPosition(0);
         } else if (gamepad1.right_bumper)
@@ -95,6 +158,9 @@ public class Teleop extends OpMode {
         } else if (gamepad1.left_bumper)
             grabber2.setPosition(1);
 
+
+        telemetry.addData("liftposition", lift.getCurrentPosition());
+        telemetry.addData("elevator", elevator.getPosition());
 
     }
 }
