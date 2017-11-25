@@ -89,7 +89,7 @@ public class Teleop extends OpMode {
 
         ServoControllerEx grabber2Controller = (ServoControllerEx) grabber2.getController();
         int grabber2ServoPort = grabber2.getPortNumber();
-        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1418, 2200);
+        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1360, 2200);
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
