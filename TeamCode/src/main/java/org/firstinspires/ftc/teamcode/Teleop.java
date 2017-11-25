@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
@@ -35,6 +36,9 @@ public class Teleop extends OpMode {
     Servo grabber2;
 
     Servo elevator;
+
+    DigitalChannel touchtop;
+    DigitalChannel touchbot;
 
 
     double elbowPosition;
@@ -80,13 +84,13 @@ public class Teleop extends OpMode {
 
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
-        PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(899, 2100);
+        PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(1418, 2200);
         grabberController.setServoPwmRange(grabberServoPort, grabberPwmRange);
 
         ServoControllerEx grabber2Controller = (ServoControllerEx) grabber2.getController();
         int grabber2ServoPort = grabber2.getPortNumber();
-        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(899, 2100);
-        grabberController.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
+        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1418, 2200);
+        grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
@@ -95,13 +99,19 @@ public class Teleop extends OpMode {
 
         ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
         int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(899, 2105);
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(1013, 2105);
         elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
 
         ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
         int wristServoPort = wrist.getPortNumber();
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
         wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+
+        ServoControllerEx elevatorController = (ServoControllerEx) elevator.getController();
+        int elevatorServoPort = elevator.getPortNumber();
+        PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(899, 2105);
+        elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
+
 
         double shoulderInitialize = 0;
 
@@ -114,9 +124,13 @@ public class Teleop extends OpMode {
 
         elevator.setPosition(.5);
 
-        arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
+        touchtop = hardwareMap.get(DigitalChannel.class, "tt");
+        touchbot = hardwareMap.get(DigitalChannel.class, "tb");
 
-        //farrm = new Arm(shoulder, elbow, wrist, ,this);
+        touchtop.setMode(DigitalChannel.Mode.INPUT);
+        touchbot.setMode(DigitalChannel.Mode.INPUT);
+
+        arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
 
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
@@ -134,19 +148,22 @@ public class Teleop extends OpMode {
             lift.setPower(0);
         }
 
-        if(gamepad2.y) {
-            elevator.setPosition(0);
-        } else if(gamepad2.a) {
-            elevator.setPosition(1);
-        } else {
+        if(elevator.getPosition() < 0.5 && touchtop.getState() == false) {
             elevator.setPosition(.5);
+        } else if(elevator.getPosition() > 0.5 && touchbot.getState() == false) {
+            elevator.setPosition(.5);
+        } else if(gamepad1.dpad_up) {
+            elevator.setPosition(0);
+        } else if(gamepad1.dpad_down) {
+            elevator.setPosition(1);
         }
 
         arm.moveArm(gamepad2);
 
-        /*if (gamepad2.y) {
+        if (gamepad2.y) {
             arm.placeRelic();
-        }*/
+        }
+
 
         if(gamepad1.right_trigger > .5) {
             grabber.setPosition(0);
