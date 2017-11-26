@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
  * Created by HwaA1 on 11/4/2017.
  */
 
-@Autonomous(name = "CraptonBlueRight", group = "none")
 public class CraptonBlueRight extends LinearOpMode {
     DcMotor br;
     DcMotor bl;

@@ -89,7 +89,7 @@ public class Teleop extends OpMode {
 
         ServoControllerEx grabber2Controller = (ServoControllerEx) grabber2.getController();
         int grabber2ServoPort = grabber2.getPortNumber();
-        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1360, 2200);
+        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1340, 2200);
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
@@ -109,7 +109,7 @@ public class Teleop extends OpMode {
 
         ServoControllerEx elevatorController = (ServoControllerEx) elevator.getController();
         int elevatorServoPort = elevator.getPortNumber();
-        PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(899, 2105);
+        PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(759, 2250);
         elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
 
 
@@ -117,7 +117,7 @@ public class Teleop extends OpMode {
 
         shoulder.setPosition(shoulderInitialize);
 
-        elbow.setPosition(.8);
+        elbow.setPosition(.65);
         wrist.setPosition(0);
         wristation.setPosition(.5);
         finger.setPosition(1);
@@ -140,15 +140,17 @@ public class Teleop extends OpMode {
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
-        if(gamepad2.dpad_up) {
-            lift.setPower(.4);
-        } else if(gamepad2.dpad_down) {
-            lift.setPower(-.4);
+        if(gamepad2.dpad_up && lift.getCurrentPosition() < 2400) {
+            lift.setPower(.5);
+        } else if(gamepad2.dpad_down && (lift.getCurrentPosition() > 10 || gamepad2.back)) {
+            lift.setPower(-.5);
         } else {
             lift.setPower(0);
         }
 
-        if(elevator.getPosition() < 0.5 && touchtop.getState() == false) {
+        if(elevator.getPosition() != 0.5 && (gamepad1.dpad_left || gamepad1.dpad_right) ) {
+            elevator.setPosition(0.5);
+        } else if(elevator.getPosition() < 0.5 && touchtop.getState() == false) {
             elevator.setPosition(.5);
         } else if(elevator.getPosition() > 0.5 && touchbot.getState() == false) {
             elevator.setPosition(.5);

@@ -62,9 +62,9 @@ public class Arm {
         double elbowPosition = elbow.getPosition();
         double originalElbowPosition = elbow.getPosition();
 
-        if(gamepad.right_stick_y > .5) {
+        if(gamepad.left_stick_y > .5) {
             elbowPosition += .003;
-        } else if(gamepad.right_stick_y < -.5){
+        } else if(gamepad.left_stick_y < -.5){
             elbowPosition -= .003;
         } else {}
 
@@ -82,11 +82,11 @@ public class Arm {
 
         double originalShould = imaginaryShoulderPosition;
 
-        if(gamepad.left_stick_y > .5) {
+        if(gamepad.right_stick_y > .5) {
             imaginaryShoulderPosition += .003;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
-        } else if(gamepad.left_stick_y < -.5){
+        } else if(gamepad.right_stick_y < -.5){
             imaginaryShoulderPosition -= .003;
 
             //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
@@ -133,14 +133,6 @@ public class Arm {
             fingerPos = 0;
         }
         finger.setPosition(fingerPos);
-
-
-
-        //op.telemetry.addData("shoulderPos", shoulderPos);
-        //op.telemetry.addData("x", x);
-        //op.telemetry.addData("shoulderPosition ", shoulderPosition);
-        //op.telemetry.update();
-        //Log.d("[Phoenix]", "set shoulder position " + shoulderPos);
     }
 
     public void moveArm(JointMovement shoulderMove, JointMovement elbowMove, JointMovement wristMove, WristDirection wristationDirection, GrabberMovement grabber, MoveSpeed speed) {

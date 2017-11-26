@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
 /**
  * Created by HwaA1 on 11/4/2017.
  */
-@Autonomous(name = "CraptonRedLeft", group = "none")
+
 public class CraptonRedLeft extends LinearOpMode {
     DcMotor br;
     DcMotor bl;
