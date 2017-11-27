@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
  * Created by HwaA1 on 11/25/2017.
  */
 
-@Autonomous(name = "Blue_Left", group = "none")
+@Autonomous(name = "Blue_RIGHT", group = "none")
 public class Auton_Blue_Left extends LinearOpMode {
     DcMotor br;
     DcMotor bl;
@@ -33,6 +33,7 @@ public class Auton_Blue_Left extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         Vuforia vu = new Vuforia(this);
         vu.activate();
 
@@ -76,8 +77,6 @@ public class Auton_Blue_Left extends LinearOpMode {
             cryptodistance = 17;
         }
 
-        grabber.setPosition(0);
-
         wheels.drive(22, Direction.FORWARD, .5, this);
         wheels.drive(cryptodistance, Direction.FORWARD, .5, this);
         wheels.turnByIMU(82, .5, Direction.LEFT);
@@ -91,6 +90,6 @@ public class Auton_Blue_Left extends LinearOpMode {
         grabber.setPosition(0);
         Thread.sleep(750);
         wheels.drive(3, Direction.FORWARD, .5, this);
-        wheels.drive(3, Direction.BACKWARD, .5, this);
+        wheels.drive(1, Direction.BACKWARD, .5, this);
     }
 }
