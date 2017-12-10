@@ -99,7 +99,7 @@ public class Teleop extends OpMode {
 
         ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
         int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(1013, 2105);
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
         elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
 
         ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
@@ -140,7 +140,7 @@ public class Teleop extends OpMode {
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
-        if(gamepad2.dpad_up && lift.getCurrentPosition() < 2400) {
+        if(gamepad2.dpad_up && (lift.getCurrentPosition() < 2500 || gamepad2.back)) {
             lift.setPower(.5);
         } else if(gamepad2.dpad_down && (lift.getCurrentPosition() > 10 || gamepad2.back)) {
             lift.setPower(-.5);
@@ -167,15 +167,15 @@ public class Teleop extends OpMode {
         }
 
 
-        if(gamepad1.right_trigger > .5) {
-            grabber.setPosition(0);
-        } else if (gamepad1.right_bumper)
-            grabber.setPosition(1);
-
-        if(gamepad1.left_trigger > .5) {
+        if(gamepad1.right_bumper) {
             grabber2.setPosition(0);
         } else if (gamepad1.left_bumper)
             grabber2.setPosition(1);
+
+        if(gamepad1.right_trigger > .5) {
+            grabber.setPosition(0);
+        } else if (gamepad1.left_trigger > .5)
+            grabber.setPosition(1);
 
 
         telemetry.addData("liftposition", lift.getCurrentPosition());

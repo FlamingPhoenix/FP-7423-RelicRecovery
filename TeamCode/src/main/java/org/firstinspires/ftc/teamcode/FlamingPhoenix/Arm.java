@@ -68,6 +68,12 @@ public class Arm {
             elbowPosition -= .003;
         } else {}
 
+        if(elbowPosition > 1) {
+            elbowPosition = 1;
+        } else if(elbowPosition < 0) {
+            elbowPosition = 0;
+        }
+
         double diffEl = elbowPosition - originalElbowPosition;
         elbow.setPosition(elbowPosition);
 
@@ -77,34 +83,37 @@ public class Arm {
         } else if(gamepad.right_stick_x < -.5) {
             rotationPos -= .0025;
         }
+        if(rotationPos > 1) {
+            rotationPos = 1;
+        } else if(elbowPosition < 0) {
+            rotationPos = 0;
+        }
         wristation.setPosition(rotationPos);
 
 
         double originalShould = imaginaryShoulderPosition;
 
         if(gamepad.right_stick_y > .5) {
-            imaginaryShoulderPosition += .003;
-
-            //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
-        } else if(gamepad.right_stick_y < -.5){
             imaginaryShoulderPosition -= .003;
-
-            //Log.d("[Phoenix]", "Shoulder position: " + shoulderPosition);
-        } else {}
-        //base.setPosition(basePosition);
+        } else if(gamepad.right_stick_y < -.5){
+            imaginaryShoulderPosition += .003;
+        }
+        if(imaginaryShoulderPosition > 1) {
+            imaginaryShoulderPosition = 1;
+        } else if(imaginaryShoulderPosition < 0) {
+            imaginaryShoulderPosition = 0;
+        }
 
         double newShould = imaginaryShoulderPosition;
 
-        double x = elbow.getPosition();
-
-        double shoulderPos = imaginaryShoulderPosition + .5 - (elbowPosition / 2);
+        double shoulderPos = imaginaryShoulderPosition - .5 + (elbowPosition / 2);
         Log.d("[Phoenix]", "shoulderPos:" + shoulderPos);
 
         if(shoulderPos > 1) {
             shoulderPos = 1;
         } else if(shoulderPos < 0) {
             shoulderPos = 0;
-        } else {}
+        }
 
         double shoulderDifference = newShould - originalShould;
         shoulder.setPosition(shoulderPos);
@@ -124,12 +133,24 @@ public class Arm {
         Log.d("[Phoenix-wrist]", "shoulderDifference: " + Double.toString(shoulderDifference));
         Log.d("[Phoenix-wrist]", "Original wrist: " + Double.toString(origWristPosition));
         Log.d("[Phoenix-wrist]", "wristPosition: " + Double.toString(wristPosition));
+
+        if(wristPosition > 1) {
+            wristPosition = 1;
+        } else if(wristPosition < 0) {
+            wristPosition = 0;
+        }
         wrist.setPosition(wristPosition);
 
         double fingerPos = finger.getPosition();
         if(gamepad.right_bumper) {
             fingerPos = 1;
         } else if(gamepad.right_trigger > .5) {
+            fingerPos = 0;
+        }
+
+        if(fingerPos > 1) {
+            fingerPos = 1;
+        } else if(shoulderPos < 0) {
             fingerPos = 0;
         }
         finger.setPosition(fingerPos);
@@ -230,9 +251,9 @@ public class Arm {
 
         double rotationPos = wristation.getPosition();
         if(rotationPos < wristationPost) {
-            rotationPos += .0025;
+            rotationPos += .01;
         } else if(rotationPos > wristationPost) {
-            rotationPos -= .0025;
+            rotationPos -= .01;
         }
         wristation.setPosition(rotationPos);
 

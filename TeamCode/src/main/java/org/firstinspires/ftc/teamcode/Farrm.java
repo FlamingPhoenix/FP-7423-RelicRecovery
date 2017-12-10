@@ -33,15 +33,14 @@ public class Farrm extends OpMode {
         finger  = hardwareMap.servo.get("finger");
         wristation = hardwareMap.servo.get("wristation");
 
-
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(899, 1860);
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(968, 1748);
         servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
 
         ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
         int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(899, 2105);
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
         elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
 
         ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
@@ -49,10 +48,11 @@ public class Farrm extends OpMode {
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
         wristController.setServoPwmRange(wristServoPort, wristPwmRange);
 
-        double shoulderInitialize = .33;
+
+        double shoulderInitialize = 1;
 
         shoulder.setPosition(shoulderInitialize);
-        elbow.setPosition(.8);
+        elbow.setPosition(1);
         wrist.setPosition(1);
         wristation.setPosition(.5);
         finger.setPosition(1);
