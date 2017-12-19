@@ -54,7 +54,7 @@ public class Farrm extends OpMode {
         shoulder.setPosition(shoulderInitialize);
         elbow.setPosition(1);
         wrist.setPosition(1);
-        wristation.setPosition(.5);
+        wristation.setPosition(1);
         finger.setPosition(1);
 
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
@@ -91,8 +91,10 @@ public class Farrm extends OpMode {
 
         arm.moveArm(gamepad1);
 
-        if (gamepad2.y) {
-            arm.placeRelic();
+        if (gamepad1.y) {
+            arm.moveOutOfWay();
+        } else if(gamepad1.a) {
+            arm.pullArmBack();
         }
 
         telemetry.addData("shoulder", shoulder.getPosition());

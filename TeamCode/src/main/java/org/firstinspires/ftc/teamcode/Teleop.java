@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,8 +52,11 @@ public class Teleop extends OpMode {
 
     Arm arm;
 
+    boolean isBumperBeingPressed;
+    boolean isGrabber2Closed;
 
-
+    boolean isTriggerBeingPressed;
+    boolean isGrabberClosed;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -84,12 +89,12 @@ public class Teleop extends OpMode {
 
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
-        PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(1418, 2200);
+        PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(899, 2200);
         grabberController.setServoPwmRange(grabberServoPort, grabberPwmRange);
 
         ServoControllerEx grabber2Controller = (ServoControllerEx) grabber2.getController();
         int grabber2ServoPort = grabber2.getPortNumber();
-        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(1340, 2200);
+        PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(899, 2200);
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
         ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
@@ -113,13 +118,12 @@ public class Teleop extends OpMode {
         elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
 
 
-        double shoulderInitialize = 0;
+        double shoulderInitialize = 1;
 
         shoulder.setPosition(shoulderInitialize);
-
-        elbow.setPosition(.65);
+        elbow.setPosition(1);
         wrist.setPosition(0);
-        wristation.setPosition(.5);
+        wristation.setPosition(1);
         finger.setPosition(1);
 
         elevator.setPosition(.5);
@@ -140,46 +144,66 @@ public class Teleop extends OpMode {
     public void loop() {
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
-        if(gamepad2.dpad_up && (lift.getCurrentPosition() < 2500 || gamepad2.back)) {
+        if(gamepad2.dpad_up && (lift.getCurrentPosition() < 4400 || gamepad2.back)) {
             lift.setPower(.5);
-        } else if(gamepad2.dpad_down && (lift.getCurrentPosition() > 10 || gamepad2.back)) {
+        } else if(gamepad2.dpad_down && (lift.getCurrentPosition() > 60 || gamepad2.back)) {
             lift.setPower(-.5);
         } else {
             lift.setPower(0);
         }
 
-        if(elevator.getPosition() != 0.5 && (gamepad1.dpad_left || gamepad1.dpad_right) ) {
-            elevator.setPosition(0.5);
-        } else if(elevator.getPosition() < 0.5 && touchtop.getState() == false) {
-            elevator.setPosition(.5);
-        } else if(elevator.getPosition() > 0.5 && touchbot.getState() == false) {
-            elevator.setPosition(.5);
-        } else if(gamepad1.dpad_up) {
-            elevator.setPosition(0);
-        } else if(gamepad1.dpad_down) {
-            elevator.setPosition(1);
-        }
-
         arm.moveArm(gamepad2);
 
         if (gamepad2.y) {
-            arm.placeRelic();
+            arm.moveOutOfWay();
+        }
+
+        if(gamepad1.right_trigger > .5) {
+            if(!isTriggerBeingPressed) {
+                isTriggerBeingPressed = true;
+
+                if(isGrabberClosed)
+                    grabber.setPosition(1);
+                else
+                    grabber.setPosition(0);
+            }
+        }
+        else if (isTriggerBeingPressed) {
+            if(grabber.getPosition() > .9) {
+                isGrabberClosed = false;
+            } else if(grabber.getPosition() < .1) {
+                isGrabberClosed = true;
+            }
+
+            isTriggerBeingPressed = false;
         }
 
 
         if(gamepad1.right_bumper) {
-            grabber2.setPosition(0);
-        } else if (gamepad1.left_bumper)
-            grabber2.setPosition(1);
+            if(!isBumperBeingPressed) {
+                isBumperBeingPressed = true;
 
-        if(gamepad1.right_trigger > .5) {
-            grabber.setPosition(0);
-        } else if (gamepad1.left_trigger > .5)
-            grabber.setPosition(1);
+                if(isGrabber2Closed)
+                    grabber2.setPosition(1);
+                else
+                    grabber2.setPosition(0);
+            }
+        }
+        else if (isBumperBeingPressed) {
+            if(grabber2.getPosition() > .9) {
+                isGrabber2Closed = false;
+            } else if(grabber2.getPosition() < .1) {
+                isGrabber2Closed = true;
+            }
 
+            isBumperBeingPressed = false;
+        }
 
-        telemetry.addData("liftposition", lift.getCurrentPosition());
-        telemetry.addData("elevator", elevator.getPosition());
-
+        telemetry.addData("triggerbeingpressed", isTriggerBeingPressed);
+        telemetry.addData("grabberclosedboolena", isGrabberClosed);
+        telemetry.addData("grabber", grabber.getPosition());
+        //telemetry.addData("liftposition", lift.getCurrentPosition());
+        //telemetry.addData("elevator", elevator.getPosition());
+        telemetry.update();
     }
 }
