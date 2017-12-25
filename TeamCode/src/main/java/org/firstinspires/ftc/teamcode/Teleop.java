@@ -6,6 +6,7 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -44,10 +45,6 @@ public class Teleop extends OpMode {
 
     Servo elevator;
 
-    DigitalChannel touchtop;
-    DigitalChannel touchbot;
-
-
     double elbowPosition;
     double shoulderPosition = .5;
 
@@ -56,6 +53,8 @@ public class Teleop extends OpMode {
     BNO055IMU imu;
 
     Arm arm;
+
+    ColorSensor color;
 
     boolean isBumperBeingPressed;
     boolean isGrabber2Closed;
@@ -133,12 +132,6 @@ public class Teleop extends OpMode {
 
         elevator.setPosition(.5);
 
-        touchtop = hardwareMap.get(DigitalChannel.class, "tt");
-        touchbot = hardwareMap.get(DigitalChannel.class, "tb");
-
-        touchtop.setMode(DigitalChannel.Mode.INPUT);
-        touchbot.setMode(DigitalChannel.Mode.INPUT);
-
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 1, this);
 
         bl.setDirection(DcMotor.Direction.REVERSE);
@@ -197,13 +190,15 @@ public class Teleop extends OpMode {
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
-        if(gamepad2.dpad_up && (lift.getCurrentPosition() < 4400 || gamepad2.back)) {
-            lift.setPower(.5);
-        } else if(gamepad2.dpad_down && (lift.getCurrentPosition() > 60 || gamepad2.back)) {
-            lift.setPower(-.5);
+        double liftPosition = lift.getCurrentPosition();
+        if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.back)) {
+            lift.setPower(.6);
+        } else if(gamepad2.dpad_down && (liftPosition > 60 || gamepad2.back)) {
+            lift.setPower(-.6);
         } else {
             lift.setPower(0);
         }
+        telemetry.addData("lift:", liftPosition);
 
         arm.moveArm(gamepad2);
 
@@ -258,11 +253,7 @@ public class Teleop extends OpMode {
             isBumperBeingPressed = false;
         }
 
-        telemetry.addData("triggerbeingpressed", isTriggerBeingPressed);
-        telemetry.addData("grabberclosedboolena", isGrabberClosed);
-        telemetry.addData("grabber", grabber.getPosition());
-        //telemetry.addData("liftposition", lift.getCurrentPosition());
-        //telemetry.addData("elevator", elevator.getPosition());
+
         telemetry.update();
     }
 }
