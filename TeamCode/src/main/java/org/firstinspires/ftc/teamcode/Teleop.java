@@ -112,6 +112,11 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
         wristController.setServoPwmRange(wristServoPort, wristPwmRange);
 
+        ServoControllerEx wristationController = (ServoControllerEx) wristation.getController();
+        int wristationServoPort = wristation.getPortNumber();
+        PwmControl.PwmRange wristationPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristationController.setServoPwmRange(wristationServoPort, wristationPwmRange);
+
         ServoControllerEx elevatorController = (ServoControllerEx) elevator.getController();
         int elevatorServoPort = elevator.getPortNumber();
         PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(759, 2250);
@@ -123,7 +128,7 @@ public class Teleop extends OpMode {
         shoulder.setPosition(shoulderInitialize);
         elbow.setPosition(1);
         wrist.setPosition(0);
-        wristation.setPosition(1);
+        wristation.setPosition(.5);
         finger.setPosition(1);
 
         elevator.setPosition(.5);
@@ -155,7 +160,13 @@ public class Teleop extends OpMode {
         arm.moveArm(gamepad2);
 
         if (gamepad2.y) {
-            arm.moveOutOfWay();
+            arm.placeRelic();
+        }
+
+        if(gamepad2.x) {
+            arm.grabRelic();
+        } else if(gamepad2.a) {
+            arm.pullArmBack();
         }
 
         if(gamepad1.right_trigger > .5) {
