@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -13,6 +14,10 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Arm;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.GrabberMovement;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.JointMovement;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.MoveSpeed;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.WristDirection;
 
 /**
  * Created by HwaA1 on 10/31/2017.
@@ -57,6 +62,10 @@ public class Teleop extends OpMode {
 
     boolean isTriggerBeingPressed;
     boolean isGrabberClosed;
+
+    boolean isArmInitialized;
+    boolean isArmPositionSet;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -122,15 +131,6 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(759, 2250);
         elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
 
-
-        double shoulderInitialize = 1;
-
-        shoulder.setPosition(shoulderInitialize);
-        elbow.setPosition(1);
-        wrist.setPosition(0);
-        wristation.setPosition(.5);
-        finger.setPosition(1);
-
         elevator.setPosition(.5);
 
         touchtop = hardwareMap.get(DigitalChannel.class, "tt");
@@ -139,14 +139,62 @@ public class Teleop extends OpMode {
         touchtop.setMode(DigitalChannel.Mode.INPUT);
         touchbot.setMode(DigitalChannel.Mode.INPUT);
 
-        arm = new Arm(shoulder, elbow, wrist, wristation, finger, shoulderInitialize, this);
+        arm = new Arm(shoulder, elbow, wrist, wristation, finger, 1, this);
 
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
+
+        isArmPositionSet = false;
+        isArmInitialized = false;
+    }
+    //Initialize arm servo values
+    public void initializeArm() {
+        if (!isArmInitialized) {
+            double shoulderInitialize = 1;
+
+            shoulder.setPosition(shoulderInitialize);
+            elbow.setPosition(1);
+            wrist.setPosition(0);
+            wristation.setPosition(.5);
+            finger.setPosition(1);
+
+            isArmInitialized = true;
+        }
+    }
+
+    //Move arm to preset position to so it would not interfere grabber during teleop
+    public void presetArmPosition() {
+
+        if (!isArmPositionSet) {
+            wristation.setPosition(0.5);
+
+            JointMovement elbowMovement = JointMovement.STILL;
+            JointMovement shoulderMovement = JointMovement.STILL;
+
+            if (elbow.getPosition() > 0.95)
+                elbowMovement = JointMovement.FORWARD;
+
+            if (shoulder.getPosition() > 0.6)
+                shoulderMovement = JointMovement.FORWARD;
+
+            if ((elbowMovement == JointMovement.STILL) && (shoulderMovement == JointMovement.STILL)) {
+                isArmPositionSet = true;
+                return;
+            }
+
+            arm.moveArm(shoulderMovement, elbowMovement, JointMovement.STILL, WristDirection.STILL, GrabberMovement.OPEN, MoveSpeed.SLOW);
+        }
+
     }
 
     @Override
     public void loop() {
+        if (!isArmInitialized) {//initialize arm servo values here, not in init() so that the arm will not move during init and violate the game rule
+            initializeArm();
+        } else if (!isArmPositionSet) { //Move the arm out of way from the grabber first, only if it has not yet been moved away
+            presetArmPosition();
+        }
+
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
         if(gamepad2.dpad_up && (lift.getCurrentPosition() < 4400 || gamepad2.back)) {
