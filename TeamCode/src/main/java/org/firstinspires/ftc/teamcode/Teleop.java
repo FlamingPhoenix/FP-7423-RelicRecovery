@@ -44,6 +44,7 @@ public class Teleop extends OpMode {
     Servo grabber2;
 
     Servo elevator;
+    Servo jewel;
 
     double elbowPosition;
     double shoulderPosition = .5;
@@ -54,8 +55,6 @@ public class Teleop extends OpMode {
 
     Arm arm;
 
-    ColorSensor color;
-
     boolean isBumperBeingPressed;
     boolean isGrabber2Closed;
 
@@ -64,6 +63,12 @@ public class Teleop extends OpMode {
 
     boolean isArmInitialized;
     boolean isArmPositionSet;
+
+    boolean isJewelInitialized;
+    boolean isJewelPullBack;
+    long jewelInitializeTime;
+    ColorSensor color;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -130,6 +135,13 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(759, 2250);
         elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
 
+        jewel = hardwareMap.servo.get("jewel");
+        ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
+        int jewelServoPort = jewel.getPortNumber();
+        PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
+        jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
+
+
         elevator.setPosition(.5);
 
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 1, this);
@@ -139,6 +151,10 @@ public class Teleop extends OpMode {
 
         isArmPositionSet = false;
         isArmInitialized = false;
+
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(false);
+
     }
     //Initialize arm servo values
     public void initializeArm() {
@@ -167,7 +183,7 @@ public class Teleop extends OpMode {
             if (elbow.getPosition() > 0.95)
                 elbowMovement = JointMovement.FORWARD;
 
-            if (shoulder.getPosition() > 0.6)
+            if (shoulder.getPosition() > 0.55)
                 shoulderMovement = JointMovement.FORWARD;
 
             if ((elbowMovement == JointMovement.STILL) && (shoulderMovement == JointMovement.STILL)) {
@@ -182,10 +198,18 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        if (!isArmInitialized) {//initialize arm servo values here, not in init() so that the arm will not move during init and violate the game rule
+        if (!isJewelInitialized) {
+            jewel.setPosition(0.5);
+            isJewelInitialized = true;
+            isJewelPullBack = false;
+            jewelInitializeTime = System.currentTimeMillis();
+        } else if (!isArmInitialized) {//initialize arm servo values here, not in init() so that the arm will not move during init and violate the game rule
             initializeArm();
         } else if (!isArmPositionSet) { //Move the arm out of way from the grabber first, only if it has not yet been moved away
             presetArmPosition();
+        } else if ((!isJewelPullBack) && ((System.currentTimeMillis() - jewelInitializeTime) > 4000)) {
+            jewel.setPosition(1);
+            isJewelPullBack = true;
         }
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
