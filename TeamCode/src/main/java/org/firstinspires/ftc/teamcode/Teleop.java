@@ -159,9 +159,7 @@ public class Teleop extends OpMode {
     //Initialize arm servo values
     public void initializeArm() {
         if (!isArmInitialized) {
-            double shoulderInitialize = 1;
-
-            shoulder.setPosition(shoulderInitialize);
+            shoulder.setPosition(0.5);
             elbow.setPosition(1);
             wrist.setPosition(0);
             wristation.setPosition(.5);
@@ -183,7 +181,7 @@ public class Teleop extends OpMode {
             if (elbow.getPosition() > 0.95)
                 elbowMovement = JointMovement.FORWARD;
 
-            if (shoulder.getPosition() > 0.55)
+            if (arm.getImaginaryShoulderPosition() > 0.55)
                 shoulderMovement = JointMovement.FORWARD;
 
             if ((elbowMovement == JointMovement.STILL) && (shoulderMovement == JointMovement.STILL)) {
@@ -199,7 +197,7 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         if (!isJewelInitialized) {
-            jewel.setPosition(0.5);
+            jewel.setPosition(0.3);
             isJewelInitialized = true;
             isJewelPullBack = false;
             jewelInitializeTime = System.currentTimeMillis();

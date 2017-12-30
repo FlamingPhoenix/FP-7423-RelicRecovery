@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
  */
 
 //@Autonomous(name = "Blue_LEFT", group = "none")
-public class Auton_Blue_Left extends LinearOpMode {
+public class AutonTestDONOTUSE extends LinearOpMode {
     DcMotor br;
     DcMotor bl;
     DcMotor fr;

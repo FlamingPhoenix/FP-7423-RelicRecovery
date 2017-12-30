@@ -29,7 +29,7 @@ public class Test extends LinearOpMode {
 
     Servo grabber;
 
-    //Servo jewel;
+    Servo jewel;
 
     BNO055IMU imu;
 
@@ -55,26 +55,33 @@ public class Test extends LinearOpMode {
 
         grabber = hardwareMap.servo.get("grabber");
 
-        //jewel = hardwareMap.servo.get("jewel");
+        jewel = hardwareMap.servo.get("jewel");
 
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
         PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(1418, 2200);
         grabberController.setServoPwmRange(grabberServoPort, grabberPwmRange);
 
-        //ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
-        //int jewelServoPort = jewel.getPortNumber();
-        //PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
-        //jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
+        ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
+        int jewelServoPort = jewel.getPortNumber();
+        PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
+        jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
 
 
         grabber.setPosition(1);
 
-        //jewel.setPosition(1);
+        jewel.setPosition(1);
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
         waitForStart();
+
+
+        jewel.setPosition(0);
+
+        Thread.sleep(1000);
+
+        wheels.strafe(1, .3, Direction.RIGHT, this);
 
         while(opModeIsActive()) {
             telemetry.addData("color blue:", color.blue());
