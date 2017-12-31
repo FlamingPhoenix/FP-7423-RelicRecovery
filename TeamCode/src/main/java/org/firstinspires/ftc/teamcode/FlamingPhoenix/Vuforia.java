@@ -68,4 +68,19 @@ public class Vuforia {
         }
     }
 
+    public double getZ() {
+        OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            double tZ = trans.get(2);
+
+            return tZ;
+        }
+
+        return 0;
+    }
+
 }

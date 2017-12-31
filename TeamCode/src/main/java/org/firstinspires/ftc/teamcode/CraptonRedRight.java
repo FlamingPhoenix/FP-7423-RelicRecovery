@@ -89,16 +89,19 @@ public class CraptonRedRight extends LinearOpMode {
 
         waitForStart();
 
-        int strafingDistance = 8;
+        int strafingDistance = 6;
 
         //scan for image first
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 3;
+            strafingDistance = 1;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 8;
+            strafingDistance = 6;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 13;
+            strafingDistance = 11;
         }
+
+        double zdistance = vu.getZ();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
 
         jewel.setPosition(0);
         shoulder.setPosition(.5);
@@ -113,17 +116,20 @@ public class CraptonRedRight extends LinearOpMode {
 
         Thread.sleep(1000);
 
+        zdistance = vu.getZ();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
+
         //look for image again
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 3;
+            strafingDistance = 1;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 8;
+            strafingDistance = 6;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 13;
+            strafingDistance = 11;
         }
 
         double jeweldistance = 1.5;
-        Direction jeweldirection = Direction.FORWARD;
+        Direction jeweldirection;
         int redValue = color.red();
         int blueValue = color.blue();
 
@@ -132,33 +138,35 @@ public class CraptonRedRight extends LinearOpMode {
         } else if (blueValue - redValue >= 10) {
             jeweldirection = Direction.BACKWARD;
         } else {
+            jeweldirection = null;
             jeweldistance = 0;
         }
 
-        wheels.drive(jeweldistance, jeweldirection, .3, this);
+        wheels.drive(jeweldistance, jeweldirection, .15, this);
 
         Thread.sleep(500);
 
         wheels.strafe(1, .3, Direction.LEFT, this);
+
+        Thread.sleep(200);
+
+        zdistance = vu.getZ();
+        telemetry.addData("z", zdistance);
+        telemetry.update();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
+
         jewel.setPosition(1);
+
+        wheels.drive((jeweldirection == Direction.BACKWARD ? 25 : jeweldirection == Direction.FORWARD ? 15 : 22), Direction.FORWARD, .4, this);
 
         Log.d("[Phoenix-auto]", "jeweldirection: " + jeweldirection + ". jeweldistance: " + jeweldistance);
         Log.d("[Phoenix-auto]", "blue: " + blueValue+ ". red: " + redValue);
         Log.d("[Phoenix-auto]", "vumark: " + vu.scanVuforia());
 
-        Thread.sleep(15000);
-
-        /*wheels.drive(5 + jeweldistance * (jeweldirection == Direction.FORWARD ? -1: 1), Direction.FORWARD, .3, this);
-
-        //Allow time for Vuforia to see the image
-        Thread.sleep(2000);
-
-        wheels.drive(12, Direction.FORWARD, .5, this);
-
         Log.d("[Phoenix-view]", "vu: " + vu.scanVuforia());
 
         wheels.strafe(strafingDistance, .5, Direction.LEFT, this);
-        wheels.drive(5, Direction.FORWARD, .5, this);
+        wheels.drive(12, Direction.FORWARD, .5, this);
 
         grabber.setPosition(1);
         Thread.sleep(1000);
@@ -174,6 +182,6 @@ public class CraptonRedRight extends LinearOpMode {
 
         grabber.setPosition(1);
         Thread.sleep(1000);
-        */
+
     }
 }

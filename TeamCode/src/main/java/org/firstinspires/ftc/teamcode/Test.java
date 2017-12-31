@@ -48,10 +48,10 @@ public class Test extends LinearOpMode {
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
 
-        color = hardwareMap.get(ColorSensor.class, "color");
-        color.enableLed(true);
-
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        /*color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(true);
 
         grabber = hardwareMap.servo.get("grabber");
 
@@ -70,23 +70,12 @@ public class Test extends LinearOpMode {
 
         grabber.setPosition(1);
 
-        jewel.setPosition(1);
+        jewel.setPosition(1); */
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
         waitForStart();
 
-
-        jewel.setPosition(0);
-
-        Thread.sleep(1000);
-
-        wheels.strafe(1, .3, Direction.RIGHT, this);
-
-        while(opModeIsActive()) {
-            telemetry.addData("color blue:", color.blue());
-            telemetry.addData("color red:", color.red());
-            telemetry.update();
-        }
+        wheels.drive(20, Direction.FORWARD, .5, this);
     }
 }

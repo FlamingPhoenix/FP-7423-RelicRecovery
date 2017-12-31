@@ -110,13 +110,17 @@ public class Drive {
         backLeft = Range.clip(backLeft, -1, 1);
         backRight = Range.clip(backRight, -1, 1);
 
-        if(gamepad.left_bumper) {
+        if(gamepad.left_bumper || gamepad.left_trigger > .5) {
             frontLeft /= 2;
             frontRight /= 2;
             backLeft /= 2;
             backRight /= 2;
+        } else if (gamepad.left_bumper && gamepad.left_trigger > .5) {
+            frontLeft /= 4;
+            frontRight /= 4;
+            backLeft /= 4;
+            backRight /= 4;
         }
-
         fl.setPower(frontLeft);
         fr.setPower(frontRight);
         bl.setPower(backLeft);
