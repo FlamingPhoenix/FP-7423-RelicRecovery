@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
  * Created by HwaA1 on 10/19/2017.
  */
 
-@Autonomous(name = "test", group = "none")
 public class Test extends LinearOpMode {
 
     DcMotor br;

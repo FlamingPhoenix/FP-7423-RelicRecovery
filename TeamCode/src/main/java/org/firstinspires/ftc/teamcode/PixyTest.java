@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Library.PixyCam;
  * Created by HwaA1 on 10/22/2017.
  */
 
-@Autonomous(name = "pixytest", group = "none")
 public class PixyTest extends LinearOpMode {
 
     I2cDeviceSynch pix;

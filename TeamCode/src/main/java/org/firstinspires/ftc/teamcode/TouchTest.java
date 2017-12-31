@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * Created by HwaA1 on 11/21/2017.
  */
 
-@TeleOp(name = "touchtest", group = "none")
 public class TouchTest extends OpMode {
 
     DigitalChannel touch;

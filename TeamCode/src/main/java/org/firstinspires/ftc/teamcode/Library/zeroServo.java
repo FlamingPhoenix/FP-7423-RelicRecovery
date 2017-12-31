@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
  */
 
 
-@TeleOp(name = "servozero", group = "none")
 public class zeroServo extends OpMode {
 
     Servo elbow;

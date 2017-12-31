@@ -12,8 +12,6 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Arm;
  * Created by HwaA1 on 11/2/2017.
  */
 
-@TeleOp(name = "Farrm", group = "none")
-
 public class Farrm extends OpMode {
 
     Servo shoulder;

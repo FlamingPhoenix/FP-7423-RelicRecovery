@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.R.attr.rotation;
 
-@TeleOp(name="TestPixyCam")
 public class TestPixyCam extends OpMode
 {
 

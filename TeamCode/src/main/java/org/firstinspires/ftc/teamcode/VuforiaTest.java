@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
 
 import static com.sun.tools.javac.util.Constants.format;
 
@@ -29,46 +31,17 @@ public class VuforiaTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate");
+        Vuforia vu = new Vuforia(this);
+        vu.activate();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            double z = vu.getZ();
+            int columnId = vu.scanVuforia();
 
-                telemetry.addData("VuMark", "%s visible", vuMark);
-
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
-
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-                }
-            }
-            else {
-                telemetry.addData("VuMark", "not visible");
-            }
-
+            telemetry.addData("z:", z);
+            telemetry.addData("Column Id:", columnId);
             telemetry.update();
         }
     }
