@@ -82,10 +82,10 @@ public class CraptonRedRight extends LinearOpMode {
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
-        vu.activate();
-
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
+
+        vu.activate();
 
         waitForStart();
 
@@ -173,15 +173,12 @@ public class CraptonRedRight extends LinearOpMode {
 
         wheels.drive(5, Direction.BACKWARD, .5, this);
 
-        wheels.strafe(3, .5, Direction.RIGHT, this);
-        grabber.setPosition(0);
+        wheels.turnByIMU(75, .5, Direction.LEFT);
+        wheels.drive(8, Direction.FORWARD, .4, this);
+        wheels.strafe(5, .5, Direction.RIGHT, this);
         Thread.sleep(1000);
+        wheels.strafe(5, .5, Direction.LEFT, this);
 
-        wheels.drive(5, Direction.FORWARD, .5, this);
-        wheels.drive(3, Direction.BACKWARD, .5, this);
-
-        grabber.setPosition(1);
-        Thread.sleep(1000);
-
+        wheels.turnByIMU(50, .4, Direction.LEFT);
     }
 }
