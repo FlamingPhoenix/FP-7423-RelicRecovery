@@ -110,6 +110,7 @@ public class CraptonBlueLeft extends LinearOpMode {
         Thread.sleep(1000);
 
         grabber.setPosition(0);
+        upperGrabber.setPosition(0);
 
         Thread.sleep(1000);
         wheels.strafe(1, .3, Direction.LEFT, this);
@@ -169,6 +170,7 @@ public class CraptonBlueLeft extends LinearOpMode {
         wheels.drive(10, Direction.FORWARD, .5, this);
 
         grabber.setPosition(1);
+        upperGrabber.setPosition(1);
         Thread.sleep(1000);
 
         wheels.drive(5, Direction.BACKWARD, .5, this);

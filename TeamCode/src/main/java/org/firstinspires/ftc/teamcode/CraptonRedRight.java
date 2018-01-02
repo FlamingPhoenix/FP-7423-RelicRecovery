@@ -110,6 +110,7 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(1000);
 
         grabber.setPosition(0);
+        upperGrabber.setPosition(0);
 
         Thread.sleep(1000);
         wheels.strafe(1, .3, Direction.RIGHT, this);
@@ -157,7 +158,19 @@ public class CraptonRedRight extends LinearOpMode {
 
         jewel.setPosition(1);
 
-        wheels.drive((jeweldirection == Direction.BACKWARD ? 25 : jeweldirection == Direction.FORWARD ? 15 : 22), Direction.FORWARD, .4, this);
+        wheels.drive((jeweldirection == Direction.BACKWARD ? 4 : jeweldirection == Direction.FORWARD ? 0 : 2), Direction.FORWARD, .15, this);
+
+        Thread.sleep(2000);
+
+        if(vu.scanVuforia() == 1) {
+            strafingDistance = 1;
+        } else if(vu.scanVuforia() == 0) {
+            strafingDistance = 6;
+        } else if(vu.scanVuforia() == -1) {
+            strafingDistance = 11;
+        }
+
+        wheels.drive((jeweldirection == Direction.FORWARD ? 16 : 18), Direction.FORWARD, .4, this);
 
         Log.d("[Phoenix-auto]", "jeweldirection: " + jeweldirection + ". jeweldistance: " + jeweldistance);
         Log.d("[Phoenix-auto]", "blue: " + blueValue+ ". red: " + redValue);
@@ -169,6 +182,7 @@ public class CraptonRedRight extends LinearOpMode {
         wheels.drive(12, Direction.FORWARD, .5, this);
 
         grabber.setPosition(1);
+        upperGrabber.setPosition(1);
         Thread.sleep(1000);
 
         wheels.drive(5, Direction.BACKWARD, .5, this);

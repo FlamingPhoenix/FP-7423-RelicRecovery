@@ -9,6 +9,7 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,27 +17,36 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Direction;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.OpModeInitializer;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
 
 @Autonomous(name = "Blue_RIGHT", group = "none")
 public class CraptonBlueRight extends LinearOpMode {
-
     DcMotor br;
     DcMotor bl;
     DcMotor fr;
     DcMotor fl;
 
+    Servo upperGrabber;
     Servo grabber;
+
+    Servo jewel;
+
+    Servo shoulder;
+    Servo wrist;
 
     Drive wheels;
 
     BNO055IMU imu;
 
+    ColorSensor color;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         Vuforia vu = new Vuforia(this);
-        vu.activate();
+
+        OpModeInitializer opModeInitializer = new OpModeInitializer();
 
         bl = hardwareMap.dcMotor.get("backleft");
         br = hardwareMap.dcMotor.get("backright");
@@ -48,49 +58,110 @@ public class CraptonBlueRight extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(true);
+
         grabber = hardwareMap.servo.get("grabber");
+        upperGrabber = hardwareMap.servo.get("grabber2");
+        jewel = hardwareMap.servo.get("jewel");
 
-        ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
-        int grabberServoPort = grabber.getPortNumber();
-        PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(1418, 2200);
-        grabberController.setServoPwmRange(grabberServoPort, grabberPwmRange);
+        opModeInitializer.initializeAutoGrabbers(grabber, upperGrabber, jewel);
 
-        grabber.setPosition(1);
+        shoulder = hardwareMap.servo.get("shoulder");
+        wrist = hardwareMap.servo.get("wrist");
+
+        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        int shoulderServoPort = shoulder.getPortNumber();
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
+        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
+
+        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        int wristServoPort = wrist.getPortNumber();
+        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
-        waitForStart();
-
-        Log.d("[Phoenix-vu]", "vumark: " + vu.scanVuforia());
-
-        telemetry.addData("vumark", vu.scanVuforia());
+        telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
 
-        grabber.setPosition(0);
+        vu.activate();
 
-        int cryptodistance = 11;
+        telemetry.addData("isOpModeActive", this.isStarted());
+        telemetry.update();
+
+        waitForStart();
+
+        int cryptodistance = 12;
 
         if(vu.scanVuforia() == -1) {
-            cryptodistance = 2;
+            cryptodistance = 5;
         } else if (vu.scanVuforia() == 0) {
-            cryptodistance = 9;
+            cryptodistance = 12;
         } else if (vu.scanVuforia() == 1) {
-            cryptodistance = 17;
+            cryptodistance = 19;
         }
 
-        wheels.drive(22, Direction.FORWARD, .5, this);
-        wheels.drive(cryptodistance, Direction.FORWARD, .5, this);
-        wheels.turnByIMU(82, .5, Direction.LEFT);
-        wheels.drive(11, Direction.FORWARD, .6, this);
+        double zdistance = vu.getZ();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
 
-        grabber.setPosition(1);
+        jewel.setPosition(0);
+        shoulder.setPosition(.5);
+        wrist.setPosition(0);
+
         Thread.sleep(1000);
 
-        wheels.drive(2, Direction.BACKWARD, .5, this);
-
         grabber.setPosition(0);
-        Thread.sleep(750);
-        wheels.drive(3, Direction.FORWARD, .5, this);
-        wheels.drive(1, Direction.BACKWARD, .5, this);
+        upperGrabber.setPosition(0);
+
+        Thread.sleep(1000);
+        wheels.strafe(1, .3, Direction.LEFT, this);
+
+        Thread.sleep(1000);
+
+        zdistance = vu.getZ();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
+
+        double jeweldistance = 1.5;
+        Direction jeweldirection;
+        int redValue = color.red();
+        int blueValue = color.blue();
+
+        if((blueValue - redValue) >= 10) {
+            jeweldirection = Direction.FORWARD;
+        } else if ((redValue - blueValue) >= 10) {
+            jeweldirection = Direction.BACKWARD;
+        } else {
+            jeweldirection = null;
+            jeweldistance = 0;
+        }
+
+        wheels.drive(jeweldistance, jeweldirection, .15, this);
+
+        Thread.sleep(500);
+
+        wheels.strafe(1, .3, Direction.RIGHT, this);
+
+        Thread.sleep(200);
+
+        zdistance = vu.getZ();
+        telemetry.addData("z", zdistance);
+        telemetry.update();
+        Log.d("[Phoenix-auto]", "z: " + zdistance);
+
+        jewel.setPosition(1);
+
+        wheels.drive((jeweldirection == Direction.BACKWARD ? 25 : jeweldirection == Direction.FORWARD ? 15 : 22), Direction.FORWARD, .4, this);
+
+        wheels.drive(cryptodistance, Direction.FORWARD, 0.5, this);
+        wheels.turnByIMU(75, .4, Direction.LEFT);
+        wheels.drive(8, Direction.FORWARD, .6, this);
+
+        grabber.setPosition(1);
+        upperGrabber.setPosition(1);
+
+        Thread.sleep(1000);
+
+        wheels.drive(3, Direction.BACKWARD, .5, this);
     }
 }

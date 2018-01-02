@@ -94,9 +94,10 @@ public class CraptonRedLeft extends LinearOpMode {
 
         waitForStart();
 
+        grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
-        int cryptodistance = 21;
+        int cryptodistance = 14;
 
         if(vu.scanVuforia() == -1) {
             cryptodistance = 21;
@@ -167,6 +168,7 @@ public class CraptonRedLeft extends LinearOpMode {
         wheels.turnByIMU(75, .4, Direction.RIGHT);
         wheels.drive(8, Direction.FORWARD, .6, this);
 
+        grabber.setPosition(1);
         upperGrabber.setPosition(1);
 
         Thread.sleep(1000);
