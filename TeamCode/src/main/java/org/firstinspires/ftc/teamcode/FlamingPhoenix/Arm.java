@@ -302,7 +302,7 @@ public class Arm {
                 pullArmStep = 1;
                 lastPullTime = System.currentTimeMillis();
             }
-        } else if ((pullArmStep == 1) && ((System.currentTimeMillis() - lastPullTime) > 1000)) {
+        } else if ((pullArmStep == 1) && ((System.currentTimeMillis() - lastPullTime) > 700)) {
             if (elbow.getPosition() < 0.8) {
                 moveArm(JointMovement.STILL, JointMovement.BACKWARD, JointMovement.STILL, WristDirection.STILL, GrabberMovement.STILL, MoveSpeed.MEDIUM);
             }

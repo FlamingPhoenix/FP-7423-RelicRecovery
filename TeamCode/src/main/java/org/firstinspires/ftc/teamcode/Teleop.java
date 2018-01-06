@@ -130,19 +130,13 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange wristationPwmRange = new PwmControl.PwmRange(750, 2250);
         wristationController.setServoPwmRange(wristationServoPort, wristationPwmRange);
 
-        ServoControllerEx elevatorController = (ServoControllerEx) elevator.getController();
-        int elevatorServoPort = elevator.getPortNumber();
-        PwmControl.PwmRange elevatorPwmRange = new PwmControl.PwmRange(759, 2250);
-        elevatorController.setServoPwmRange(elevatorServoPort, elevatorPwmRange);
-
         jewel = hardwareMap.servo.get("jewel");
         ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
         int jewelServoPort = jewel.getPortNumber();
         PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
         jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
 
-
-        elevator.setPosition(.5);
+        wrist.setPosition(0);
 
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 1, this);
 
@@ -197,7 +191,7 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         if (!isJewelInitialized) {
-            jewel.setPosition(0.3);
+            jewel.setPosition(0.4);
             isJewelInitialized = true;
             isJewelPullBack = false;
             jewelInitializeTime = System.currentTimeMillis();
@@ -206,7 +200,7 @@ public class Teleop extends OpMode {
         } else if (!isArmPositionSet) { //Move the arm out of way from the grabber first, only if it has not yet been moved away
             presetArmPosition();
         } else if ((!isJewelPullBack) && ((System.currentTimeMillis() - jewelInitializeTime) > 4000)) {
-            jewel.setPosition(1);
+            jewel.setPosition(.9);
             isJewelPullBack = true;
         }
 
@@ -214,7 +208,7 @@ public class Teleop extends OpMode {
 
         double liftPosition = lift.getCurrentPosition();
         if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.back)) {
-            lift.setPower(.6);
+            lift.setPower(.55);
         } else if(gamepad2.dpad_down && (liftPosition > 60 || gamepad2.back)) {
             lift.setPower(-.6);
         } else {
