@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
 
 @Autonomous(name = "Blue_RIGHT", group = "none")
 public class CraptonBlueRight extends LinearOpMode {
+
     DcMotor br;
     DcMotor bl;
     DcMotor fr;
@@ -34,13 +35,13 @@ public class CraptonBlueRight extends LinearOpMode {
 
     Servo shoulder;
     Servo wrist;
+    Servo elbow;
 
     Drive wheels;
 
     BNO055IMU imu;
 
     ColorSensor color;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -69,8 +70,9 @@ public class CraptonBlueRight extends LinearOpMode {
 
         shoulder = hardwareMap.servo.get("shoulder");
         wrist = hardwareMap.servo.get("wrist");
+        elbow = hardwareMap.servo.get("elbow");
 
-        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        /*ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
         PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
         servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
@@ -79,6 +81,12 @@ public class CraptonBlueRight extends LinearOpMode {
         int wristServoPort = wrist.getPortNumber();
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
         wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+
+        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
+        int elbowServoPort = elbow.getPortNumber();
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
+        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange); */
+
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
@@ -108,6 +116,7 @@ public class CraptonBlueRight extends LinearOpMode {
         jewel.setPosition(0);
         shoulder.setPosition(.5);
         wrist.setPosition(0);
+        elbow.setPosition(.9);
 
         Thread.sleep(1000);
 
@@ -122,25 +131,30 @@ public class CraptonBlueRight extends LinearOpMode {
         zdistance = vu.getZ();
         Log.d("[Phoenix-auto]", "z: " + zdistance);
 
-        double jeweldistance = 1.5;
+        double jeweldistance = 2;
         Direction jeweldirection;
         int redValue = color.red();
         int blueValue = color.blue();
 
         if((blueValue - redValue) >= 10) {
-            jeweldirection = Direction.FORWARD;
-        } else if ((redValue - blueValue) >= 10) {
             jeweldirection = Direction.BACKWARD;
+            jeweldistance = 1.5;
+        } else if ((redValue - blueValue) >= 10) {
+            jeweldirection = Direction.FORWARD;
         } else {
             jeweldirection = null;
             jeweldistance = 0;
         }
 
+        telemetry.addData("blue", color.blue());
+        telemetry.addData("red", color.red());
+        telemetry.update();
+
         wheels.drive(jeweldistance, jeweldirection, .15, this);
 
         Thread.sleep(500);
 
-        wheels.strafe(1, .3, Direction.RIGHT, this);
+        wheels.strafe(2, .2, Direction.RIGHT, this);
 
         Thread.sleep(200);
 
@@ -150,6 +164,8 @@ public class CraptonBlueRight extends LinearOpMode {
         Log.d("[Phoenix-auto]", "z: " + zdistance);
 
         jewel.setPosition(1);
+
+        Thread.sleep(500);
 
         wheels.drive((jeweldirection == Direction.BACKWARD ? 25 : jeweldirection == Direction.FORWARD ? 15 : 22), Direction.FORWARD, .4, this);
 

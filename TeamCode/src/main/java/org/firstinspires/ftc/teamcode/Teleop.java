@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.GrabberMovement;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.JointMovement;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.MoveSpeed;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.OpModeInitializer;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.WristDirection;
 
 /**
@@ -69,7 +70,6 @@ public class Teleop extends OpMode {
     long jewelInitializeTime;
     ColorSensor color;
 
-
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -95,6 +95,10 @@ public class Teleop extends OpMode {
         wristation = hardwareMap.servo.get("wristation");
         finger = hardwareMap.servo.get("finger");
 
+        OpModeInitializer opModeInit = new OpModeInitializer();
+
+        opModeInit.initalizeArm(shoulder, elbow, wrist, wristation);
+
         grabber = hardwareMap.servo.get("grabber");
         grabber2 = hardwareMap.servo.get("grabber2");
 
@@ -110,35 +114,15 @@ public class Teleop extends OpMode {
         PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(899, 2200);
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
-        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
-        int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
-        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
-
-        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
-        int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
-        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
-
-        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
-        int wristServoPort = wrist.getPortNumber();
-        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
-        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
-
-        ServoControllerEx wristationController = (ServoControllerEx) wristation.getController();
-        int wristationServoPort = wristation.getPortNumber();
-        PwmControl.PwmRange wristationPwmRange = new PwmControl.PwmRange(750, 2250);
-        wristationController.setServoPwmRange(wristationServoPort, wristationPwmRange);
-
         jewel = hardwareMap.servo.get("jewel");
         ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
         int jewelServoPort = jewel.getPortNumber();
         PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
         jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
 
-        wrist.setPosition(0);
+        wrist.setPosition(1);
 
-        arm = new Arm(shoulder, elbow, wrist, wristation, finger, 1, this);
+        arm = new Arm(shoulder, elbow, wrist, wristation, finger, 0, this);
 
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
@@ -153,9 +137,9 @@ public class Teleop extends OpMode {
     //Initialize arm servo values
     public void initializeArm() {
         if (!isArmInitialized) {
-            shoulder.setPosition(0.5);
-            elbow.setPosition(1);
-            wrist.setPosition(0);
+            shoulder.setPosition(0);
+            elbow.setPosition(0);
+            wrist.setPosition(1);
             wristation.setPosition(.5);
             finger.setPosition(1);
 
@@ -190,7 +174,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        if (!isJewelInitialized) {
+        /*if (!isJewelInitialized) {
             jewel.setPosition(0.4);
             isJewelInitialized = true;
             isJewelPullBack = false;
@@ -202,7 +186,7 @@ public class Teleop extends OpMode {
         } else if ((!isJewelPullBack) && ((System.currentTimeMillis() - jewelInitializeTime) > 4000)) {
             jewel.setPosition(.9);
             isJewelPullBack = true;
-        }
+        }*/
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
@@ -211,6 +195,10 @@ public class Teleop extends OpMode {
             lift.setPower(.55);
         } else if(gamepad2.dpad_down && (liftPosition > 60 || gamepad2.back)) {
             lift.setPower(-.6);
+        } else if((gamepad2.dpad_right) && liftPosition < 2200) {
+            lift.setPower(.7);
+        } else if(gamepad2.dpad_right && liftPosition > 2100) {
+            lift.setPower(-.7);
         } else {
             lift.setPower(0);
         }

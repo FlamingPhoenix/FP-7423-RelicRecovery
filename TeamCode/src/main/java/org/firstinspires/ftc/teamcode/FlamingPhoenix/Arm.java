@@ -73,9 +73,9 @@ public class Arm {
         double originalElbowPosition = elbow.getPosition();
 
         if(gamepad.left_stick_y > .5) {
-            elbowPosition += .003;
-        } else if(gamepad.left_stick_y < -.5){
             elbowPosition -= .003;
+        } else if(gamepad.left_stick_y < -.5){
+            elbowPosition += .003;
         } else {}
 
         if(elbowPosition > 1) {
@@ -103,9 +103,9 @@ public class Arm {
         double originalShould = imaginaryShoulderPosition;
 
         if(gamepad.right_stick_y > .5) {
-            imaginaryShoulderPosition += .003;
-        } else if (gamepad.right_stick_y < -.5) {
             imaginaryShoulderPosition -= .003;
+        } else if (gamepad.right_stick_y < -.5) {
+            imaginaryShoulderPosition += .003;
         }
 
         if(imaginaryShoulderPosition > 1) {
@@ -116,7 +116,8 @@ public class Arm {
 
         double newShould = imaginaryShoulderPosition;
 
-        double shoulderPos = imaginaryShoulderPosition - .5 + (elbowPosition / 2);
+        //double shoulderPos = imaginaryShoulderPosition + .5 - (elbowPosition / 2);
+        double shoulderPos = imaginaryShoulderPosition + (elbowPosition / 2);
 
         if(shoulderPos > 1) {
             shoulderPos = 1;
@@ -129,14 +130,14 @@ public class Arm {
 
         double wristPosition = wrist.getPosition();
         double origWristPosition = wristPosition;
-        if(gamepad.left_bumper) {
-            wristPosition = wristPosition + (diffEl/2) - shoulderDifference + .005;
+        if(gamepad.left_bumper) { //going out
+            wristPosition = wristPosition + ((diffEl/2) + shoulderDifference) * .806 - .005;
         }
-        else if(gamepad.left_trigger > .5 ) {
-            wristPosition = wristPosition + (diffEl/2) - shoulderDifference - .005;
+        else if(gamepad.left_trigger > .5 ) { //going in
+            wristPosition = wristPosition + ((diffEl/2) + shoulderDifference) * .806 + .005;
         }
         else if ((diffEl != 0) || (shoulderDifference != 0))
-            wristPosition = wristPosition + (diffEl/2) - shoulderDifference;
+            wristPosition = wristPosition + ((diffEl/2) - shoulderDifference) * .806;
 
         if(wristPosition > 1) {
             wristPosition = 1;
@@ -208,6 +209,8 @@ public class Arm {
         float newShould = (float) imaginaryShoulderPosition;
 
         double shoulderPos = imaginaryShoulderPosition - .5 + (elbowPosition / 2);
+
+        Log.d("[Phoenix-newArm]", "shoulderPos: " + shoulderPos);
 
         if(shoulderPos > 1) {
             shoulderPos = 1;

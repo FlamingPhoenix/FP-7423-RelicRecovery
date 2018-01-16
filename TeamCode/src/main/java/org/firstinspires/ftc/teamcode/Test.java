@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
  * Created by HwaA1 on 10/19/2017.
  */
 
+@Autonomous(name = "test", group = "none")
 public class Test extends LinearOpMode {
 
     DcMotor br;
@@ -49,10 +50,10 @@ public class Test extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        /*color = hardwareMap.get(ColorSensor.class, "color");
+        color = hardwareMap.get(ColorSensor.class, "color");
         color.enableLed(true);
 
-        grabber = hardwareMap.servo.get("grabber");
+        /*grabber = hardwareMap.servo.get("grabber");
 
         jewel = hardwareMap.servo.get("jewel");
 
@@ -75,6 +76,10 @@ public class Test extends LinearOpMode {
 
         waitForStart();
 
-
+        while(true) {
+            telemetry.addData("blue", color.blue());
+            telemetry.addData("red", color.red());
+            telemetry.update();
+        }
     }
 }

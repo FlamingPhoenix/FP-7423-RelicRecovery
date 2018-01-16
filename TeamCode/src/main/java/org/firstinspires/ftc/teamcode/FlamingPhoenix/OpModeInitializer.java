@@ -53,4 +53,43 @@ public class OpModeInitializer {
 
         upperGrabber.setPosition(1);
     }
+
+    public void initalizeArm(Servo shoulder, Servo elbow, Servo wrist, Servo wristation) {
+        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        int shoulderServoPort = shoulder.getPortNumber();
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
+        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
+
+        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
+        int elbowServoPort = elbow.getPortNumber();
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
+        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
+
+        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        int wristServoPort = wrist.getPortNumber();
+        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+
+        ServoControllerEx wristationController = (ServoControllerEx) wristation.getController();
+        int wristationServoPort = wristation.getPortNumber();
+        PwmControl.PwmRange wristationPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristationController.setServoPwmRange(wristationServoPort, wristationPwmRange);
+    }
+
+    public void initalizeAutoArm(Servo shoulder, Servo elbow, Servo wrist) {
+        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        int shoulderServoPort = shoulder.getPortNumber();
+        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
+        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
+
+        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
+        int elbowServoPort = elbow.getPortNumber();
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
+        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange);
+
+        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
+        int wristServoPort = wrist.getPortNumber();
+        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
+        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+    }
 }

@@ -35,6 +35,7 @@ public class CraptonRedRight extends LinearOpMode {
 
     Servo shoulder;
     Servo wrist;
+    Servo elbow;
 
     Drive wheels;
 
@@ -69,8 +70,9 @@ public class CraptonRedRight extends LinearOpMode {
 
         shoulder = hardwareMap.servo.get("shoulder");
         wrist = hardwareMap.servo.get("wrist");
+        elbow = hardwareMap.servo.get("elbow");
 
-        ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
+        /*ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
         int shoulderServoPort = shoulder.getPortNumber();
         PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
         servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
@@ -79,6 +81,13 @@ public class CraptonRedRight extends LinearOpMode {
         int wristServoPort = wrist.getPortNumber();
         PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
         wristController.setServoPwmRange(wristServoPort, wristPwmRange);
+
+        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
+        int elbowServoPort = elbow.getPortNumber();
+        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
+        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange); */
+
+        opModeInitializer.initalizeAutoArm(shoulder, elbow, wrist);
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
@@ -106,6 +115,7 @@ public class CraptonRedRight extends LinearOpMode {
         jewel.setPosition(0);
         shoulder.setPosition(.5);
         wrist.setPosition(0);
+        elbow.setPosition(.9);
 
         Thread.sleep(1000);
 
@@ -136,6 +146,7 @@ public class CraptonRedRight extends LinearOpMode {
 
         if((redValue - blueValue) >= 10) {
             jeweldirection = Direction.FORWARD;
+            jeweldistance = 2;
         } else if (blueValue - redValue >= 10) {
             jeweldirection = Direction.BACKWARD;
         } else {
@@ -147,7 +158,7 @@ public class CraptonRedRight extends LinearOpMode {
 
         Thread.sleep(500);
 
-        wheels.strafe(1, .3, Direction.LEFT, this);
+        wheels.strafe(2, .2, Direction.LEFT, this);
 
         Thread.sleep(200);
 
@@ -183,6 +194,7 @@ public class CraptonRedRight extends LinearOpMode {
 
         grabber.setPosition(1);
         upperGrabber.setPosition(1);
+
         Thread.sleep(1000);
 
         wheels.drive(5, Direction.BACKWARD, .5, this);
