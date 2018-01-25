@@ -144,11 +144,11 @@ public class Arm {
         } else if(wristPosition < 0) {
             wristPosition = 0;
         }
-        wrist.setPosition(wristPosition);
 
         double fingerPos = finger.getPosition();
         if(gamepad.right_bumper) {
             fingerPos = 1;
+            wristPosition += .5;
         } else if(gamepad.right_trigger > .5) {
             fingerPos = 0;
         }
@@ -159,6 +159,7 @@ public class Arm {
             fingerPos = 0;
         }
         finger.setPosition(fingerPos);
+        wrist.setPosition(wristPosition);
     }
 
     public void moveArm(JointMovement shoulderMove, JointMovement elbowMove, JointMovement wristMove, WristDirection wristationDirection, GrabberMovement grabber, MoveSpeed speed) {

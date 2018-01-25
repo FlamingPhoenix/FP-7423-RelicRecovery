@@ -33,6 +33,7 @@ public class CraptonRedLeft extends LinearOpMode {
     Servo grabber;
 
     Servo jewel;
+    Servo jewelbase;
 
     Servo shoulder;
     Servo wrist;
@@ -67,6 +68,10 @@ public class CraptonRedLeft extends LinearOpMode {
         grabber = hardwareMap.servo.get("grabber");
         upperGrabber = hardwareMap.servo.get("grabber2");
         jewel = hardwareMap.servo.get("jewel");
+        jewelbase = hardwareMap.servo.get("jewelbase");
+
+        jewelbase.setPosition(.5);
+        jewel.setPosition(0);
 
         opModeInitializer.initializeAutoGrabbers(grabber, upperGrabber, jewel);
 
@@ -105,6 +110,28 @@ public class CraptonRedLeft extends LinearOpMode {
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
+        jewelbase.setPosition(.7);
+        Thread.sleep(200);
+        jewelbase.setPosition(.5);
+
+        jewel.setPosition(1);
+
+        Thread.sleep(1000);
+
+        int redValue = color.red();
+        int blueValue = color.blue();
+
+        if((redValue - blueValue) >= 10) {
+            jewelbase.setPosition(.25);
+        } else if (blueValue - redValue >= 10) {
+            jewelbase.setPosition(.75);
+        }
+
+        Thread.sleep(1000);
+
+        jewelbase.setPosition(.5);
+        jewel.setPosition(0);
+
         int cryptodistance = 14;
 
         if(vu.scanVuforia() == -1) {
@@ -121,8 +148,6 @@ public class CraptonRedLeft extends LinearOpMode {
         elbow.setPosition(.9);
 
         Thread.sleep(1000);
-
-        Thread.sleep(1000);
         wheels.strafe(1, .3, Direction.RIGHT, this);
 
         Thread.sleep(1000);
@@ -135,22 +160,6 @@ public class CraptonRedLeft extends LinearOpMode {
             cryptodistance = 6;
         }
 
-        double jeweldistance = 2;
-        Direction jeweldirection;
-        int redValue = color.red();
-        int blueValue = color.blue();
-
-        if((redValue - blueValue) >= 10) {
-            jeweldirection = Direction.FORWARD;
-        } else if (blueValue - redValue >= 10) {
-            jeweldirection = Direction.BACKWARD;
-        } else {
-            jeweldirection = null;
-            jeweldistance = 0;
-        }
-
-        wheels.drive(jeweldistance, jeweldirection, .15, this);
-
         Thread.sleep(500);
 
         wheels.strafe(2, .2, Direction.LEFT, this);
@@ -159,7 +168,7 @@ public class CraptonRedLeft extends LinearOpMode {
 
         jewel.setPosition(1);
 
-        wheels.drive((jeweldirection == Direction.BACKWARD ? 4 : jeweldirection == Direction.FORWARD ? 0 : 2), Direction.FORWARD, .15, this);
+        wheels.drive(20, Direction.FORWARD, .15, this);
 
         Thread.sleep(2000);
 
@@ -171,7 +180,7 @@ public class CraptonRedLeft extends LinearOpMode {
             cryptodistance = 6;
         }
 
-        wheels.drive((jeweldirection == Direction.FORWARD ? 16 : jeweldirection == Direction.BACKWARD ? 20 : 18), Direction.FORWARD, .4, this);
+        wheels.drive(20, Direction.FORWARD, .4, this);
 
         wheels.drive(cryptodistance, Direction.FORWARD, 0.5, this);
         wheels.turnByIMU(75, .4, Direction.RIGHT);
