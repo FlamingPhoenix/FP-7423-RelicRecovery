@@ -44,8 +44,8 @@ public class Teleop extends OpMode {
     Servo grabber;
     Servo grabber2;
 
-    Servo elevator;
     Servo jewel;
+    Servo jewelbase;
 
     double elbowPosition;
     double shoulderPosition = .5;
@@ -102,8 +102,6 @@ public class Teleop extends OpMode {
         grabber = hardwareMap.servo.get("grabber");
         grabber2 = hardwareMap.servo.get("grabber2");
 
-        elevator = hardwareMap.servo.get("elevator");
-
         ServoControllerEx grabberController = (ServoControllerEx) grabber.getController();
         int grabberServoPort = grabber.getPortNumber();
         PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(899, 2200);
@@ -117,10 +115,15 @@ public class Teleop extends OpMode {
         jewel = hardwareMap.servo.get("jewel");
         ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
         int jewelServoPort = jewel.getPortNumber();
-        PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
+        PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(750, 1700);
         jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
 
-        wrist.setPosition(1);
+        jewelbase = hardwareMap.servo.get("jewelbase");
+        ServoControllerEx jewelbaseController = (ServoControllerEx) jewelbase.getController();
+        int jewelbaseServoPort = jewelbase.getPortNumber();
+        PwmControl.PwmRange jewelbasePwmRange = new PwmControl.PwmRange(750, 1280);
+        jewelController.setServoPwmRange(jewelbaseServoPort, jewelbasePwmRange);
+
 
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 0, this);
 
@@ -140,7 +143,7 @@ public class Teleop extends OpMode {
             shoulder.setPosition(0);
             elbow.setPosition(0);
             wrist.setPosition(1);
-            wristation.setPosition(.5);
+            wristation.setPosition(.55);
             finger.setPosition(1);
 
             isArmInitialized = true;
@@ -174,35 +177,32 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        /*if (!isJewelInitialized) {
-            jewel.setPosition(0.4);
+        if (!isJewelInitialized) {
+            jewel.setPosition(0);
+            jewelbase.setPosition(.4);
             isJewelInitialized = true;
-            isJewelPullBack = false;
-            jewelInitializeTime = System.currentTimeMillis();
-        } else if (!isArmInitialized) {//initialize arm servo values here, not in init() so that the arm will not move during init and violate the game rule
-            initializeArm();
-        } else if (!isArmPositionSet) { //Move the arm out of way from the grabber first, only if it has not yet been moved away
-            presetArmPosition();
-        } else if ((!isJewelPullBack) && ((System.currentTimeMillis() - jewelInitializeTime) > 4000)) {
-            jewel.setPosition(.9);
-            isJewelPullBack = true;
-        }*/
+        }
+        initializeArm();
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
         double liftPosition = lift.getCurrentPosition();
-        if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.back)) {
+        if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.start)) {
             lift.setPower(.55);
-        } else if(gamepad2.dpad_down && (liftPosition > 60 || gamepad2.back)) {
+        } else if(gamepad2.dpad_down && (liftPosition > 80 || gamepad2.start)) {
             lift.setPower(-.6);
-        } else if((gamepad2.dpad_right) && liftPosition < 2200) {
+        } else if((gamepad2.dpad_right) && liftPosition < 1600) {
             lift.setPower(.7);
-        } else if(gamepad2.dpad_right && liftPosition > 2100) {
+        } else if(gamepad2.dpad_right && liftPosition > 1700) {
             lift.setPower(-.7);
         } else {
             lift.setPower(0);
         }
         telemetry.addData("lift:", liftPosition);
+
+        if(gamepad2.start) {
+            telemetry.addData("buttonispressed", "button is pressed");
+        }
 
         arm.moveArm(gamepad2);
 
