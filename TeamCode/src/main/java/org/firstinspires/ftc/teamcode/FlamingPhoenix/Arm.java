@@ -131,10 +131,10 @@ public class Arm {
         double wristPosition = wrist.getPosition();
         double origWristPosition = wristPosition;
         if(gamepad.left_bumper) { //going out
-            wristPosition = wristPosition + ((diffEl/2) + shoulderDifference) * .806 - .005;
+            wristPosition = wristPosition + ((diffEl/2) - shoulderDifference) * .806 - .005;
         }
         else if(gamepad.left_trigger > .5 ) { //going in
-            wristPosition = wristPosition + ((diffEl/2) + shoulderDifference) * .806 + .005;
+            wristPosition = wristPosition + ((diffEl/2) - shoulderDifference) * .806 + .005;
         }
         else if ((diffEl != 0) || (shoulderDifference != 0))
             wristPosition = wristPosition + ((diffEl/2) - shoulderDifference) * .806;
@@ -224,13 +224,13 @@ public class Arm {
         float wristPosition = (float) wrist.getPosition();
         float origWristPosition = (float) wristPosition;
         if(wristMove == JointMovement.BACKWARD) {
-            wristPosition = (float) (wristPosition + ((diffEl/2) + shoulderDifference) * .806 + .005);
+            wristPosition = (float) (wristPosition + ((diffEl/2) - shoulderDifference) * .806 + .005);
         }
         else if(wristMove == JointMovement.FORWARD) {
-            wristPosition = (float) (wristPosition + ((diffEl/2) + shoulderDifference) * .806 - .005);
+            wristPosition = (float) (wristPosition + ((diffEl/2) - shoulderDifference) * .806 - .005);
         }
         else if ((diffEl != 0) || (shoulderDifference != 0))
-            wristPosition = (float) (wristPosition + ((diffEl/2) + shoulderDifference) * .806);
+            wristPosition = (float) (wristPosition + ((diffEl/2) - shoulderDifference) * .806);
 
         if(wristPosition > 1) {
             wristPosition = 1;
@@ -315,6 +315,7 @@ public class Arm {
             }
         } else if(pullArmStep == 2) {
             wristation.setPosition(.45);
+            wrist.setPosition(.4);
             resetArmAutoVariables();
         }
     }
