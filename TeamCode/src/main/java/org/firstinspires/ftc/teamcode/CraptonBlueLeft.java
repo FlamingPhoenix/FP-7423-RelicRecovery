@@ -32,6 +32,7 @@ public class CraptonBlueLeft extends LinearOpMode {
     Servo grabber;
 
     Servo jewel;
+    Servo jewelbase;
 
     Servo shoulder;
     Servo wrist;
@@ -65,6 +66,10 @@ public class CraptonBlueLeft extends LinearOpMode {
         grabber = hardwareMap.servo.get("grabber");
         upperGrabber = hardwareMap.servo.get("grabber2");
         jewel = hardwareMap.servo.get("jewel");
+        jewelbase = hardwareMap.servo.get("jewelbase");
+
+        jewel.setPosition(.1);
+        jewelbase.setPosition(.2);
 
         opModeInitializer.initializeAutoGrabbers(grabber, upperGrabber, jewel);
 
@@ -72,23 +77,10 @@ public class CraptonBlueLeft extends LinearOpMode {
         wrist = hardwareMap.servo.get("wrist");
         elbow = hardwareMap.servo.get("elbow");
 
-        /*ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
-        int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
-        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
-
-        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
-        int wristServoPort = wrist.getPortNumber();
-        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
-        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
-
-        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
-        int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
-        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange); */
-
-
         wheels = new Drive(fr, br, fl, bl, imu, this);
+
+        grabber.setPosition(0);
+        upperGrabber.setPosition(0);
 
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
@@ -108,71 +100,41 @@ public class CraptonBlueLeft extends LinearOpMode {
             strafingDistance = 1;
         }
 
-        double zdistance = vu.getZ();
-        Log.d("[Phoenix-auto]", "z: " + zdistance);
-
-        jewel.setPosition(0);
-        shoulder.setPosition(.5);
-        wrist.setPosition(0);
-        elbow.setPosition(.9);
-
         Thread.sleep(1000);
 
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
+        jewelbase.setPosition(.3);
         Thread.sleep(1000);
-        wheels.strafe(1, .3, Direction.LEFT, this);
+        jewelbase.setPosition(.2);
+
+        jewel.setPosition(.7);
 
         Thread.sleep(1000);
 
-        zdistance = vu.getZ();
-        Log.d("[Phoenix-auto]", "z: " + zdistance);
-
-        //look for image again
-        if(vu.scanVuforia() == 1) {
-            strafingDistance = 11;
-        } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 6;
-        } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 1;
-        }
-
-        double jeweldistance = 2;
-        Direction jeweldirection;
         int redValue = color.red();
         int blueValue = color.blue();
 
         if((blueValue - redValue) >= 10) {
-            jeweldirection = Direction.BACKWARD;
-            jeweldistance = 1.5;
+            jewelbase.setPosition(.0);
         } else if ((redValue - blueValue) >= 10) {
-            jeweldirection = Direction.FORWARD;
-        } else {
-            jeweldirection = null;
-            jeweldistance = 0;
+            jewelbase.setPosition(.4);
         }
-
-        wheels.drive(jeweldistance, jeweldirection, .15, this);
-
-        Thread.sleep(500);
-
-        wheels.strafe(2, .2, Direction.RIGHT, this);
-
-        Thread.sleep(200);
-
-        zdistance = vu.getZ();
-        telemetry.addData("z", zdistance);
+        telemetry.addData("blue", color.blue());
+        telemetry.addData("red", color.red());
         telemetry.update();
-        Log.d("[Phoenix-auto]", "z: " + zdistance);
 
-        jewel.setPosition(1);
+        Thread.sleep(1000);
+
+        jewel.setPosition(.1);
+        Thread.sleep(200);
+        jewelbase.setPosition(.2);
 
         Thread.sleep(500);
 
-        wheels.drive((jeweldirection == Direction.BACKWARD ? 25 : jeweldirection == Direction.FORWARD ? 15 : 22), Direction.FORWARD, .4, this);
+        wheels.drive(22, Direction.FORWARD, .4, this);
 
-        Log.d("[Phoenix-auto]", "jeweldirection: " + jeweldirection + ". jeweldistance: " + jeweldistance);
         Log.d("[Phoenix-auto]", "blue: " + blueValue+ ". red: " + redValue);
         Log.d("[Phoenix-auto]", "vumark: " + vu.scanVuforia());
 

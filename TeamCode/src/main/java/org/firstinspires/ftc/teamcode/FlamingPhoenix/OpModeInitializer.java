@@ -27,12 +27,12 @@ public class OpModeInitializer {
 
         grabber2.setPosition(1);
 
-        ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
+        /*ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
         int jewelServoPort = jewel.getPortNumber();
         PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(899, 2105);
         jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
 
-        jewel.setPosition(1);
+        jewel.setPosition(1);*/
 
     }
 

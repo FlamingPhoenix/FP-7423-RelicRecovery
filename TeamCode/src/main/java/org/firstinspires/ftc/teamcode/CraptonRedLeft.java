@@ -70,8 +70,8 @@ public class CraptonRedLeft extends LinearOpMode {
         jewel = hardwareMap.servo.get("jewel");
         jewelbase = hardwareMap.servo.get("jewelbase");
 
-        jewelbase.setPosition(.5);
-        jewel.setPosition(0);
+        jewelbase.setPosition(.2);
+        jewel.setPosition(.1);
 
         opModeInitializer.initializeAutoGrabbers(grabber, upperGrabber, jewel);
 
@@ -79,23 +79,10 @@ public class CraptonRedLeft extends LinearOpMode {
         wrist = hardwareMap.servo.get("wrist");
         elbow = hardwareMap.servo.get("elbow");
 
-        /*ServoControllerEx servoController = (ServoControllerEx) shoulder.getController();
-        int shoulderServoPort = shoulder.getPortNumber();
-        PwmControl.PwmRange shoulderPwmRange = new PwmControl.PwmRange(1015, 1776);
-        servoController.setServoPwmRange(shoulderServoPort, shoulderPwmRange);
-
-        ServoControllerEx wristController = (ServoControllerEx) wrist.getController();
-        int wristServoPort = wrist.getPortNumber();
-        PwmControl.PwmRange wristPwmRange = new PwmControl.PwmRange(750, 2250);
-        wristController.setServoPwmRange(wristServoPort, wristPwmRange);
-
-        ServoControllerEx elbowController = (ServoControllerEx) elbow.getController();
-        int elbowServoPort = elbow.getPortNumber();
-        PwmControl.PwmRange elbowPwmRange = new PwmControl.PwmRange(700, 2300);
-        elbowController.setServoPwmRange(elbowServoPort, elbowPwmRange); */
-
-
         wheels = new Drive(fr, br, fl, bl, imu, this);
+
+        grabber.setPosition(0);
+        upperGrabber.setPosition(0);
 
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
@@ -110,11 +97,11 @@ public class CraptonRedLeft extends LinearOpMode {
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
-        jewelbase.setPosition(.7);
-        Thread.sleep(200);
-        jewelbase.setPosition(.5);
+        jewelbase.setPosition(.3);
+        Thread.sleep(1000);
+        jewelbase.setPosition(.2);
 
-        jewel.setPosition(1);
+        jewel.setPosition(.7);
 
         Thread.sleep(1000);
 
@@ -122,62 +109,29 @@ public class CraptonRedLeft extends LinearOpMode {
         int blueValue = color.blue();
 
         if((redValue - blueValue) >= 10) {
-            jewelbase.setPosition(.25);
+            jewelbase.setPosition(0);
         } else if (blueValue - redValue >= 10) {
-            jewelbase.setPosition(.75);
+            jewelbase.setPosition(.4);
         }
 
         Thread.sleep(1000);
 
-        jewelbase.setPosition(.5);
         jewel.setPosition(0);
+        Thread.sleep(1000);
+        jewelbase.setPosition(.18);
 
         int cryptodistance = 14;
 
-        if(vu.scanVuforia() == -1) {
-            cryptodistance = 21;
-        } else if (vu.scanVuforia() == 0) {
-            cryptodistance = 14;
-        } else if (vu.scanVuforia() == 1) {
-            cryptodistance = 6;
-        }
-
-        jewel.setPosition(0);
-        shoulder.setPosition(.5);
-        wrist.setPosition(0);
-        elbow.setPosition(.9);
-
-        Thread.sleep(1000);
-        wheels.strafe(1, .3, Direction.RIGHT, this);
-
-        Thread.sleep(1000);
-
-        if(vu.scanVuforia() == -1) {
-            cryptodistance = 21;
-        } else if (vu.scanVuforia() == 0) {
-            cryptodistance = 14;
-        } else if (vu.scanVuforia() == 1) {
-            cryptodistance = 6;
-        }
-
-        Thread.sleep(500);
-
-        wheels.strafe(2, .2, Direction.LEFT, this);
-
-        Thread.sleep(200);
-
-        jewel.setPosition(1);
-
-        wheels.drive(20, Direction.FORWARD, .15, this);
+        wheels.drive(2, Direction.FORWARD, .15, this);
 
         Thread.sleep(2000);
 
         if(vu.scanVuforia() == -1) {
-            cryptodistance = 21;
+            cryptodistance = 17;
         } else if (vu.scanVuforia() == 0) {
-            cryptodistance = 14;
+            cryptodistance = 10;
         } else if (vu.scanVuforia() == 1) {
-            cryptodistance = 6;
+            cryptodistance = 2;
         }
 
         wheels.drive(20, Direction.FORWARD, .4, this);

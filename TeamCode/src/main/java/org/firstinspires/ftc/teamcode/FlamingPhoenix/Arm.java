@@ -358,6 +358,7 @@ public class Arm {
             }
         } else if (placeRelicStep == 4) {
             wristation.setPosition(1);
+            wrist.setPosition(.7);
             resetArmAutoVariables();
         }
 

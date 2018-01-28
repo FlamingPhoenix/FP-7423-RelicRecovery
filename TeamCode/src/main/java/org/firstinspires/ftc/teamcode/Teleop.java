@@ -113,16 +113,7 @@ public class Teleop extends OpMode {
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
         jewel = hardwareMap.servo.get("jewel");
-        ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
-        int jewelServoPort = jewel.getPortNumber();
-        PwmControl.PwmRange jewelPwmRange = new PwmControl.PwmRange(750, 1700);
-        jewelController.setServoPwmRange(jewelServoPort, jewelPwmRange);
-
         jewelbase = hardwareMap.servo.get("jewelbase");
-        ServoControllerEx jewelbaseController = (ServoControllerEx) jewelbase.getController();
-        int jewelbaseServoPort = jewelbase.getPortNumber();
-        PwmControl.PwmRange jewelbasePwmRange = new PwmControl.PwmRange(750, 1280);
-        jewelController.setServoPwmRange(jewelbaseServoPort, jewelbasePwmRange);
 
 
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 0, this);
@@ -141,7 +132,7 @@ public class Teleop extends OpMode {
     public void initializeArm() {
         if (!isArmInitialized) {
             shoulder.setPosition(0);
-            elbow.setPosition(0);
+            elbow.setPosition(0.05);
             wrist.setPosition(1);
             wristation.setPosition(.55);
             finger.setPosition(1);
@@ -178,8 +169,8 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         if (!isJewelInitialized) {
-            jewel.setPosition(0);
-            jewelbase.setPosition(.4);
+            jewel.setPosition(.1);
+            jewelbase.setPosition(.2);
             isJewelInitialized = true;
         }
         initializeArm();
@@ -198,11 +189,7 @@ public class Teleop extends OpMode {
         } else {
             lift.setPower(0);
         }
-        telemetry.addData("lift:", liftPosition);
 
-        if(gamepad2.start) {
-            telemetry.addData("buttonispressed", "button is pressed");
-        }
 
         arm.moveArm(gamepad2);
 
@@ -257,7 +244,7 @@ public class Teleop extends OpMode {
             isBumperBeingPressed = false;
         }
 
-
+        telemetry.addData("elbowposition", elbow.getPosition());
         telemetry.update();
     }
 }
