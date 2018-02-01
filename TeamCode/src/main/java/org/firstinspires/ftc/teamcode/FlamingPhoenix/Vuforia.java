@@ -85,4 +85,17 @@ public class Vuforia {
         return 0;
     }
 
+    public float getXAngle() {
+        OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            return rot.secondAngle;
+        }
+
+        return -9999;//return -9999 indicate we can't read the value
+    }
+
 }

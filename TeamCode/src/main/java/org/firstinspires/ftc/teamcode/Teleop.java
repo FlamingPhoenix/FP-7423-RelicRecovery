@@ -203,6 +203,10 @@ public class Teleop extends OpMode {
             arm.pullArmBack();
         }
 
+        if(gamepad2.b) {
+            arm.farrRelic();
+        }
+
         if(gamepad1.right_trigger > .5) {
             if(!isTriggerBeingPressed) {
                 isTriggerBeingPressed = true;

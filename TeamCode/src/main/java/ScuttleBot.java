@@ -7,7 +7,7 @@ import com.qualcomm.hardware.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="Tank Drive", group="demo")
+//@TeleOp(name="Tank Drive", group="demo")
 public class ScuttleBot extends LinearOpMode {
 
     public DcMotor frontLeft;
