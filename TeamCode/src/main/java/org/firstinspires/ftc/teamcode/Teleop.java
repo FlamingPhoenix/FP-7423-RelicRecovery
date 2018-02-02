@@ -70,6 +70,10 @@ public class Teleop extends OpMode {
     long jewelInitializeTime;
     ColorSensor color;
 
+    boolean shoulderIsInitialized;
+    boolean shoulderIsInitializing;
+    long  shoulderStartTime;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -173,7 +177,7 @@ public class Teleop extends OpMode {
             jewelbase.setPosition(.2);
             isJewelInitialized = true;
         }
-        initializeArm();
+        //initializeArm();
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
@@ -190,21 +194,27 @@ public class Teleop extends OpMode {
             lift.setPower(0);
         }
 
-
         arm.moveArm(gamepad2);
 
-        if (gamepad2.y) {
-            arm.placeRelic();
-        }
-
-        if(gamepad2.x) {
-            arm.grabRelic();
-        } else if(gamepad2.a) {
-            arm.pullArmBack();
-        }
-
-        if(gamepad2.b) {
-            arm.farrRelic();
+        if(gamepad2.x || gamepad2.a || gamepad2.b || gamepad2.y) {
+            if(!shoulderIsInitialized){
+                shoulderIsInitialized = true;
+                shoulderStartTime = System.currentTimeMillis();
+                shoulderIsInitializing = false;
+            } else if(shoulderIsInitializing && (shoulderStartTime - System.currentTimeMillis() > 2000)){
+                shoulderIsInitializing = false;
+                shoulderIsInitialized = true;
+            } else {
+                if (gamepad2.y) {
+                    arm.placeRelic();
+                } else if (gamepad2.x) {
+                    arm.grabRelic();
+                } else if (gamepad2.a) {
+                    arm.pullArmBack();
+                } else if (gamepad2.b) {
+                    arm.farrRelic();
+                }
+            }
         }
 
         if(gamepad1.right_trigger > .5) {
