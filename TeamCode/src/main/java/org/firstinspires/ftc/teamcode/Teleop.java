@@ -177,14 +177,14 @@ public class Teleop extends OpMode {
             jewelbase.setPosition(.2);
             isJewelInitialized = true;
         }
-        //initializeArm();
+        initializeArm();
 
         wheels.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1);
 
         double liftPosition = lift.getCurrentPosition();
         if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.start)) {
             lift.setPower(.55);
-        } else if(gamepad2.dpad_down && (liftPosition > 80 || gamepad2.start)) {
+        } else if(gamepad2.dpad_down && (liftPosition > 130 || gamepad2.start)) {
             lift.setPower(-.6);
         } else if((gamepad2.dpad_right) && liftPosition < 1600) {
             lift.setPower(.7);
@@ -196,26 +196,16 @@ public class Teleop extends OpMode {
 
         arm.moveArm(gamepad2);
 
-        if(gamepad2.x || gamepad2.a || gamepad2.b || gamepad2.y) {
-            if(!shoulderIsInitialized){
-                shoulderIsInitialized = true;
-                shoulderStartTime = System.currentTimeMillis();
-                shoulderIsInitializing = false;
-            } else if(shoulderIsInitializing && (shoulderStartTime - System.currentTimeMillis() > 2000)){
-                shoulderIsInitializing = false;
-                shoulderIsInitialized = true;
-            } else {
-                if (gamepad2.y) {
-                    arm.placeRelic();
-                } else if (gamepad2.x) {
-                    arm.grabRelic();
-                } else if (gamepad2.a) {
-                    arm.pullArmBack();
-                } else if (gamepad2.b) {
-                    arm.farrRelic();
-                }
-            }
+        if (gamepad2.y) {
+            arm.placeRelic();
+        } else if (gamepad2.x) {
+            arm.grabRelic();
+        } else if (gamepad2.a) {
+            arm.pullArmBack();
+        } else if (gamepad2.b) {
+            arm.farrRelic();
         }
+
 
         if(gamepad1.right_trigger > .5) {
             if(!isTriggerBeingPressed) {
