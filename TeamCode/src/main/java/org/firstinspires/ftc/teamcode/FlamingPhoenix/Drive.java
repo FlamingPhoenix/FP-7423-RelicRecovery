@@ -193,13 +193,13 @@ public class Drive {
         fr.setPower(0);
     }
 
-    public void strafe(int distance, double power, Direction direction, LinearOpMode opMode) throws InterruptedException {
+    public void strafe(double distance, double power, Direction direction, LinearOpMode opMode) throws InterruptedException {
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         opMode.idle();
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         opMode.idle();
 
-        int pulseNeeded = (int) Math.round((PPR * distance) / (wheelDiameter * Math.PI));
+        int pulseNeeded = (int) Math.round(((double) PPR * distance) / ((double) wheelDiameter * Math.PI));
 
         pulseNeeded = (int) Math.round((double) pulseNeeded/0.5); //the distance is around .5 the normal
 

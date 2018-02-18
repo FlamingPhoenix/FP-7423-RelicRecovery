@@ -89,16 +89,21 @@ public class CraptonBlueLeft extends LinearOpMode {
 
         waitForStart();
 
-        int strafingDistance = 6;
+        double strafingDistance = 6.0;
 
         //scan for image first
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 11;
+            strafingDistance = 13;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 6;
+            strafingDistance = 7.5;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 1;
+            strafingDistance = 3;
         }
+
+        float imageAngle = vu.getXAngle();
+        strafingDistance -= vu.getAddDistance(imageAngle, 22);
+
+        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 22) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
 
         Thread.sleep(1000);
 
@@ -139,6 +144,8 @@ public class CraptonBlueLeft extends LinearOpMode {
         Log.d("[Phoenix-auto]", "vumark: " + vu.scanVuforia());
 
         Log.d("[Phoenix-view]", "vu: " + vu.scanVuforia());
+
+        Thread.sleep(1000);
 
         wheels.strafe(strafingDistance, .5, Direction.RIGHT, this);
         wheels.drive(10, Direction.FORWARD, .5, this);

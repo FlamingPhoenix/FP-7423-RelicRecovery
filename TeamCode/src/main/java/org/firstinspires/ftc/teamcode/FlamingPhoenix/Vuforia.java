@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.vuforia.HINT;
@@ -96,6 +98,27 @@ public class Vuforia {
         }
 
         return -9999;//return -9999 indicate we can't read the value
+    }
+
+    public double getAddDistance(float degrees, double distanceFromBalancePad) {
+        float distance;
+
+        if(degrees != -9999) {
+            float radians = (float) Math.toRadians(degrees); //originally multiply by 2 because the angle that we recieved was inaccurate and was often smaller than what we would like. THIS WAS PUT IN AFTERWARDS
+
+            if (Math.abs(radians) > 1.2)
+                radians *= 2;
+
+            float multiplier = (float) Math.sin(radians);
+
+            distance = (float) (distanceFromBalancePad * multiplier);
+
+            Log.d("[Phoenix-Adjustment]", "radians: " + radians + " multiplier: " + multiplier + " distance: " + distance);
+
+            return distance;
+        }
+
+        return 0;
     }
 
 }

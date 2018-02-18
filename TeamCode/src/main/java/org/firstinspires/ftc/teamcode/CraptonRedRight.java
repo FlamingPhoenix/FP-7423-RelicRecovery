@@ -85,14 +85,16 @@ public class CraptonRedRight extends LinearOpMode {
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
-        telemetry.addData("isOpModeActive", this.isStarted());
-        telemetry.update();
-
         vu.activate();
+
+        telemetry.addData("isOpModeActive", this.isStarted());
+        telemetry.addData("image angle", vu.getXAngle());
+        telemetry.addData("adjustmentdistance", vu.getAddDistance(vu.getXAngle(), 22));
+        telemetry.update();
 
         waitForStart();
 
-        int strafingDistance = 6;
+        double strafingDistance = 8;
 
         Thread.sleep(1000);
 
@@ -129,14 +131,22 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(2000);
 
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 1;
+            strafingDistance = 2;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 6;
+            strafingDistance = 6.5;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 11;
+            strafingDistance = 12;
         }
 
+
+        float imageAngle = vu.getXAngle();
+        strafingDistance += vu.getAddDistance(imageAngle, 22);
+
+        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 22) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
+
         wheels.drive(18, Direction.FORWARD, .4, this);
+
+        Thread.sleep(1000);
 
         wheels.strafe(strafingDistance, .5, Direction.LEFT, this);
         wheels.drive(12, Direction.FORWARD, .5, this);

@@ -23,6 +23,7 @@ import static com.sun.tools.javac.util.Constants.format;
  * Created by HwaA1 on 11/21/2017.
  */
 
+@Autonomous(name = "VuTest", group = "none")
 public class VuforiaTest extends LinearOpMode {
 
     OpenGLMatrix lastLocation = null;
@@ -38,7 +39,7 @@ public class VuforiaTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             double z = vu.getZ();
-            int columnId = vu.scanVuforia();
+            double columnId = vu.getXAngle();
 
             telemetry.addData("z:", z);
             telemetry.addData("Column Id:", columnId);
