@@ -104,7 +104,7 @@ public class Vuforia {
         float distance;
 
         if(degrees != -9999) {
-            float radians = (float) Math.toRadians(degrees); //originally multiply by 2 because the angle that we recieved was inaccurate and was often smaller than what we would like. THIS WAS PUT IN AFTERWARDS
+            float radians = (float) Math.toRadians(degrees);
 
             if (Math.abs(radians) > 1.2)
                 radians *= 2;

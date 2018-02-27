@@ -81,9 +81,6 @@ public class CraptonRedLeft extends LinearOpMode {
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
-        grabber.setPosition(0);
-        upperGrabber.setPosition(0);
-
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
 
@@ -96,6 +93,10 @@ public class CraptonRedLeft extends LinearOpMode {
 
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
+
+        wheels.drive(1, Direction.FORWARD, .2, this);
+
+        Thread.sleep(1000);
 
         jewelbase.setPosition(.3);
         Thread.sleep(1000);

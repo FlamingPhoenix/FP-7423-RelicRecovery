@@ -119,7 +119,6 @@ public class Teleop extends OpMode {
         jewel = hardwareMap.servo.get("jewel");
         jewelbase = hardwareMap.servo.get("jewelbase");
 
-
         arm = new Arm(shoulder, elbow, wrist, wristation, finger, 0, this);
 
         bl.setDirection(DcMotor.Direction.REVERSE);

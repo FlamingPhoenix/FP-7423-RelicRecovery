@@ -79,9 +79,6 @@ public class CraptonBlueLeft extends LinearOpMode {
 
         wheels = new Drive(fr, br, fl, bl, imu, this);
 
-        grabber.setPosition(0);
-        upperGrabber.setPosition(0);
-
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
 
