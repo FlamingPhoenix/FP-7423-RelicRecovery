@@ -98,11 +98,41 @@ public class CraptonRedLeft extends LinearOpMode {
 
         Thread.sleep(1000);
 
+        double distanceFromKey = vu.getZ();
+        double difference =(-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        Direction strafeD = Direction.LEFT;
+        if(difference > 0) {
+            strafeD = Direction.RIGHT;
+        }
+
+        Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
+
+        if (strafeD == Direction.LEFT){
+            wheels.strafe(Math.abs(difference), .25, strafeD, this);
+        }
+
         jewelbase.setPosition(.3);
         Thread.sleep(1000);
         jewelbase.setPosition(.2);
 
-        jewel.setPosition(.7);
+        jewel.setPosition(.65);
+
+        Thread.sleep(500);
+
+        distanceFromKey = vu.getZ();
+        difference = (-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        if(difference > 0) {
+            strafeD = Direction.RIGHT;
+        }
+
+        wheels.strafe(Math.abs(difference), .25, strafeD, this);
+
+
+        Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 
         Thread.sleep(1000);
 
@@ -121,6 +151,7 @@ public class CraptonRedLeft extends LinearOpMode {
         Thread.sleep(1000);
         jewelbase.setPosition(.18);
 
+        /*
         int cryptodistance = 14;
 
         wheels.drive(2, Direction.FORWARD, .15, this);
@@ -146,7 +177,7 @@ public class CraptonRedLeft extends LinearOpMode {
 
         Thread.sleep(1000);
 
-        wheels.drive(3, Direction.BACKWARD, .5, this);
+        wheels.drive(3, Direction.BACKWARD, .5, this); */
     }
 }
 
