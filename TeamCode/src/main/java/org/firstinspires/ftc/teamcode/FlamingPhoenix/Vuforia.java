@@ -100,6 +100,21 @@ public class Vuforia {
         return -9999;//return -9999 indicate we can't read the value
     }
 
+    public float getxDistance(){
+         OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        float tx = trans.get(1);
+
+        return tx;
+    }
+
+        return 0;
+}
+
     public double getAddDistance(float degrees, double distanceFromBalancePad) {
         float distance;
 
