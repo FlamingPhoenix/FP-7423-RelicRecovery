@@ -84,7 +84,7 @@ public class Vuforia {
             return tZ;
         }
 
-        return 0;
+        return -9999;
     }
 
     public float getXAngle() {
@@ -120,9 +120,6 @@ public class Vuforia {
 
         if(degrees != -9999) {
             float radians = (float) Math.toRadians(degrees);
-
-            if (Math.abs(radians) > 1.2)
-                radians *= 2;
 
             float multiplier = (float) Math.sin(radians);
 

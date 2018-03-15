@@ -96,13 +96,52 @@ public class CraptonBlueRight extends LinearOpMode {
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
+        double distanceFromKey = vu.getZ();
+
+        Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
+        Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+
+
+        double difference =(-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        Direction strafeD = Direction.RIGHT;
+        if(difference > 0) {
+            strafeD = Direction.LEFT;
+        }
+
+        if (strafeD == Direction.RIGHT){
+            wheels.strafe(Math.abs(difference), .2, strafeD, this);
+        }
+
+        Thread.sleep(500);
+
         jewelbase.setPosition(.3);
         Thread.sleep(1000);
         jewelbase.setPosition(.2);
 
-        jewel.setPosition(.7);
+        jewel.setPosition(.675);
 
-        Thread.sleep(1000);
+        Thread.sleep(500);
+
+        distanceFromKey = vu.getZ();
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
+        difference = (-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        if(difference > 0)
+            strafeD = Direction.LEFT;
+
+        wheels.strafe(Math.abs(difference), .2, strafeD, this);
+
+        Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
+
+        Thread.sleep(500);
 
         int redValue = color.red();
         int blueValue = color.blue();
@@ -124,11 +163,11 @@ public class CraptonBlueRight extends LinearOpMode {
 
         Thread.sleep(500);
 
-        wheels.drive(22, Direction.FORWARD, .4, this);
+        wheels.drive(22, Direction.FORWARD, .3, this);
 
-        wheels.drive(cryptodistance, Direction.FORWARD, 0.5, this);
+        wheels.drive(cryptodistance, Direction.FORWARD, 0.4, this);
         wheels.turnByIMU(75, .4, Direction.LEFT);
-        wheels.drive(8, Direction.FORWARD, .6, this);
+        wheels.drive(8, Direction.FORWARD, .4, this);
 
         grabber.setPosition(1);
         upperGrabber.setPosition(1);
@@ -136,5 +175,7 @@ public class CraptonBlueRight extends LinearOpMode {
         Thread.sleep(1000);
 
         wheels.drive(3, Direction.BACKWARD, .5, this);
+
+        wheels.turnByIMU(160, .5, Direction.LEFT);
     }
 }

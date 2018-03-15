@@ -182,13 +182,13 @@ public class Teleop extends OpMode {
 
         double liftPosition = lift.getCurrentPosition();
         if(gamepad2.dpad_up && (liftPosition < 4400 || gamepad2.start)) {
-            lift.setPower(.55);
-        } else if(gamepad2.dpad_down && (liftPosition > 130 || gamepad2.start)) {
-            lift.setPower(-.6);
-        } else if((gamepad2.dpad_right) && liftPosition < 1600) {
-            lift.setPower(.7);
-        } else if(gamepad2.dpad_right && liftPosition > 1700) {
-            lift.setPower(-.7);
+            lift.setPower(1);
+        } else if(gamepad2.dpad_down && (liftPosition > 200 || gamepad2.start)) {
+            lift.setPower(-1);
+        } else if((gamepad2.dpad_right) && liftPosition < 1550) {
+            lift.setPower(1);
+        } else if(gamepad2.dpad_right && liftPosition > 1750) {
+            lift.setPower(-1);
         } else {
             lift.setPower(0);
         }

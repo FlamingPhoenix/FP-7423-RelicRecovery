@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.FlamingPhoenix;
 
-import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 
 
@@ -10,13 +9,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.android.dx.cf.direct.DirectClassFile;
 
 /**
  * Created by HwaA1 on 10/19/2017.
@@ -37,6 +36,9 @@ public class Drive {
 
     final int PPR = 1120;
     final int wheelDiameter = 4;
+
+    VoltageSensor vSen1;
+    VoltageSensor vSen2;
 
     public Drive(DcMotor frmotor, DcMotor brmotor, DcMotor flmotor, DcMotor blmotor, BNO055IMU im, OpMode opmode) {
         fr = frmotor;
@@ -69,6 +71,37 @@ public class Drive {
         bl = blmotor;
 
         imu = im;
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu.initialize(parameters);
+
+        angles = imu.getAngularOrientation();
+
+        opm = opmode;
+
+    }
+
+    /*
+    Overloaded Constructor to include voltage Sensors;
+    So now we don't have to modify old programs to ensure compatibility
+     */
+    public Drive(DcMotor frmotor, DcMotor brmotor, DcMotor flmotor, DcMotor blmotor, BNO055IMU im, VoltageSensor vs1, VoltageSensor vs2, LinearOpMode opmode) {
+        fr = frmotor;
+        br = brmotor;
+        fl = flmotor;
+        bl = blmotor;
+
+        imu = im;
+
+        vSen1 = vs1;
+        vSen2 = vs2;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -223,6 +256,58 @@ public class Drive {
         bl.setPower(0);
     }
 
+    public void strafe(double distance, double power, Direction direction, MyIMU myImu, LinearOpMode opMode) throws InterruptedException {
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+
+        int pulseNeeded = (int) Math.round(((double) PPR * distance) / ((double) wheelDiameter * Math.PI));
+
+        pulseNeeded = (int) Math.round((double) pulseNeeded/0.5); //the distance is around .5 the normal
+
+        double leftAdjustment = 0;
+        double rightAdjustment = 0; //what to do if its heading too much in the right-ward direction
+        double currentHeading = myImu.getHeading();
+
+        if(currentHeading < -1) {
+            rightAdjustment = .1;
+        }
+
+        Log.d("[Phoenix-GyroStrafe]", "imu heading: " + myImu.getHeading());
+
+        while(((Math.abs(fr.getCurrentPosition())) < pulseNeeded) && opMode.opModeIsActive()) {
+            if (direction == Direction.LEFT) {
+                fl.setPower(-power);
+                bl.setPower(power);
+                fr.setPower(power + rightAdjustment);
+                br.setPower(-power);
+
+                if(currentHeading < -1) {
+                    rightAdjustment = .065;
+                } else if(currentHeading > 1) {
+                    rightAdjustment = -.05;
+                } else {
+                    rightAdjustment = 0;
+                }
+
+            } else {
+                fl.setPower(power);
+                bl.setPower(-power);
+                fr.setPower(-power);
+                br.setPower(power);
+            }
+
+            currentHeading = myImu.getHeading();
+            Log.d("[Phoenix-GyroStrafe]", "imu heading: " + myImu.getHeading() + ". adjustment power: " + rightAdjustment);
+        }
+
+        fl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
+    }
+
     public void turnByIMU(int degree, double power, Direction direction) {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -310,6 +395,75 @@ public class Drive {
          else
             return rawOrientation.firstAngle;
 
+    }
+
+    public double turnPower(double voltage) {
+        if(voltage > 14)
+            return .25;
+        else
+            return .25 + (14 - voltage) * .025;
+    }
+
+    public double turnPower() {
+        double voltage = (vSen1.getVoltage() + vSen2.getVoltage()) / 2;
+
+        if(voltage > 14)
+            return .25;
+        else
+            return .25 + (14 - voltage) * .025;
+    }
+
+    public void adjustmentTurn(double power, Direction d) {
+        if(d == Direction.LEFT) {
+            fr.setPower(power);
+            br.setPower(power);
+            fl.setPower(-power);
+            bl.setPower(-power);
+
+        } else {
+            fr.setPower(-power);
+            br.setPower(-power);
+            fl.setPower(power);
+            bl.setPower(power);
+        }
+
+        opm.sleep(150); //150 was too short. we should create a test to find optimal time
+
+        fr.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        bl.setPower(0);
+    }
+
+    public void adjustmentTurn(double power, Direction d, double distanceFromKey) {
+        if(d == Direction.LEFT) {
+            fr.setPower(power);
+            br.setPower(power);
+            fl.setPower(-power);
+            bl.setPower(-power);
+
+        } else {
+            fr.setPower(-power);
+            br.setPower(-power);
+            fl.setPower(power);
+            bl.setPower(power);
+        }
+
+        int waitTime = 150;
+
+        /*if(distanceFromKey == 2)
+            waitTime = 150;
+        else if(distanceFromKey == 12)
+            waitTime = 200;
+        else
+            waitTime = 200; */
+
+        opm.sleep(waitTime); //150 was too short. we should create a test to find optimal time
+
+        fr.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        bl.setPower(0);
     }
 
 }

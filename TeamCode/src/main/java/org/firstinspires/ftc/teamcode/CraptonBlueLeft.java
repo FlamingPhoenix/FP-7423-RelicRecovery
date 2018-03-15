@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Direction;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Drive;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.OpModeInitializer;
 import org.firstinspires.ftc.teamcode.FlamingPhoenix.Vuforia;
+import org.firstinspires.ftc.teamcode.FlamingPhoenix.MyIMU;
 
 /**
  * Created by HwaA1 on 11/4/2017.
@@ -41,6 +41,10 @@ public class CraptonBlueLeft extends LinearOpMode {
     Drive wheels;
 
     BNO055IMU imu;
+    MyIMU myImu;
+
+    VoltageSensor vSen1;
+    VoltageSensor vSen2;
 
     ColorSensor color;
 
@@ -59,6 +63,10 @@ public class CraptonBlueLeft extends LinearOpMode {
         fl.setDirection(DcMotor.Direction.REVERSE);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        myImu = new MyIMU(imu);
+
+        vSen1 = hardwareMap.voltageSensor.get("Expansion Hub 2");
+        vSen2 = hardwareMap.voltageSensor.get("Expansion Hub 3");
 
         color = hardwareMap.get(ColorSensor.class, "color");
         color.enableLed(true);
@@ -77,7 +85,7 @@ public class CraptonBlueLeft extends LinearOpMode {
         wrist = hardwareMap.servo.get("wrist");
         elbow = hardwareMap.servo.get("elbow");
 
-        wheels = new Drive(fr, br, fl, bl, imu, this);
+        wheels = new Drive(fr, br, fl, bl, imu, vSen1, vSen2, this);
 
         telemetry.addData("isOpModeActive", this.isStarted());
         telemetry.update();
@@ -86,34 +94,67 @@ public class CraptonBlueLeft extends LinearOpMode {
 
         waitForStart();
 
-        double strafingDistance = 6.0;
+        double startingHeading = myImu.getHeading();
+        double strafingDistance = 7.5;
 
         //scan for image first
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 13;
+            strafingDistance = 12;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 7.5;
+            strafingDistance = 6.5;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 3;
+            strafingDistance = 2;
         }
-
-        float imageAngle = vu.getXAngle();
-        strafingDistance -= vu.getAddDistance(imageAngle, 22);
-
-        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 22) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
-
-        Thread.sleep(1000);
 
         grabber.setPosition(0);
         upperGrabber.setPosition(0);
 
+        double distanceFromKey = vu.getZ();
+
+        Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
+        Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+
+
+        double difference =(-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        Direction strafeD = Direction.RIGHT;
+        if(difference > 0) {
+            strafeD = Direction.LEFT;
+        }
+
+        if (strafeD == Direction.RIGHT){
+            wheels.strafe(Math.abs(difference), .2, strafeD, this);
+        }
+
+        Thread.sleep(500);
+
         jewelbase.setPosition(.3);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         jewelbase.setPosition(.2);
 
-        jewel.setPosition(.7);
+        jewel.setPosition(.675);
 
-        Thread.sleep(1000);
+        Thread.sleep(500);
+
+        distanceFromKey = vu.getZ();
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
+        difference = (-distanceFromKey) - 370;
+        difference *= 0.0394;
+
+        if(difference > 0)
+            strafeD = Direction.LEFT;
+
+        wheels.strafe(Math.abs(difference), .2, strafeD, this);
+
+        Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
+
+        Thread.sleep(500);
 
         int redValue = color.red();
         int blueValue = color.blue();
@@ -133,25 +174,49 @@ public class CraptonBlueLeft extends LinearOpMode {
         Thread.sleep(200);
         jewelbase.setPosition(.2);
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
+
+        if(vu.scanVuforia() == 1) {
+            strafingDistance = 12;
+        } else if(vu.scanVuforia() == 0) {
+            strafingDistance = 6.5;
+        } else if(vu.scanVuforia() == -1) {
+            strafingDistance = 2;
+        }
+
+        float imageAngle = vu.getXAngle();
+        strafingDistance -= vu.getAddDistance(imageAngle, 40);
+
+        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 22) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
 
         wheels.drive(22, Direction.FORWARD, .4, this);
 
-        Log.d("[Phoenix-auto]", "blue: " + blueValue+ ". red: " + redValue);
-        Log.d("[Phoenix-auto]", "vumark: " + vu.scanVuforia());
-
-        Log.d("[Phoenix-view]", "vu: " + vu.scanVuforia());
-
         Thread.sleep(1000);
 
+        Direction adjTurnDirection;
         wheels.strafe(strafingDistance, .5, Direction.RIGHT, this);
-        wheels.drive(10, Direction.FORWARD, .5, this);
+
+        double currentHeading = myImu.getHeading();
+
+        Log.d("[Phoenix-AdjTurn]", "currentHeading: " + currentHeading + ". startHeading: " + startingHeading);
+
+        if(Math.abs(currentHeading - startingHeading) > 2.5) {
+            if (currentHeading > 0) //imu left is positive, right is negative
+                adjTurnDirection = Direction.RIGHT;
+            else
+                adjTurnDirection = Direction.LEFT;
+
+            wheels.adjustmentTurn(wheels.turnPower() - .025, adjTurnDirection, strafingDistance);
+        }
+
+        wheels.drive(9, Direction.FORWARD, .5, this);
 
         grabber.setPosition(1);
         upperGrabber.setPosition(1);
         Thread.sleep(1000);
 
-        wheels.drive(5, Direction.BACKWARD, .5, this);
+        wheels.drive(5, Direction.BACKWARD, .4, this);
 
+        wheels.turnByIMU(70, .5, Direction.RIGHT);
     }
 }

@@ -18,14 +18,14 @@ public class OpModeInitializer {
         PwmControl.PwmRange grabberPwmRange = new PwmControl.PwmRange(899, 2200);
         grabberController.setServoPwmRange(grabberServoPort, grabberPwmRange);
 
-        grabber.setPosition(1);
+        //grabber.setPosition(1);
 
         ServoControllerEx grabber2Controller = (ServoControllerEx) grabber2.getController();
         int grabber2ServoPort = grabber2.getPortNumber();
         PwmControl.PwmRange grabber2PwmRange = new PwmControl.PwmRange(899, 2200);
         grabber2Controller.setServoPwmRange(grabber2ServoPort, grabber2PwmRange);
 
-        grabber2.setPosition(1);
+        //grabber2.setPosition(1);
 
         /*ServoControllerEx jewelController = (ServoControllerEx) jewel.getController();
         int jewelServoPort = jewel.getPortNumber();
