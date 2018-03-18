@@ -101,7 +101,7 @@ public class CraptonRedRight extends LinearOpMode {
         waitForStart();
 
         double startingHeading = myImu.getHeading();
-        double strafingDistance = 8;
+        double strafingDistance = 6.5;
 
         Thread.sleep(1000);
 
@@ -113,11 +113,14 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(1000);
 
         double distanceFromKey = vu.getZ();
-        if(distanceFromKey == -9999)
-            distanceFromKey = -370;
 
-        double difference =(-distanceFromKey) - 370;
+        if(distanceFromKey == -9999)
+            distanceFromKey = -380;
+
+        double difference =(-distanceFromKey) - 385;
         difference *= 0.0394;
+
+        double oldDifference = difference;
 
         Direction strafeD = Direction.LEFT;
         if(difference > 0) {
@@ -127,7 +130,7 @@ public class CraptonRedRight extends LinearOpMode {
         Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 
         if (strafeD == Direction.LEFT){
-            wheels.strafe(Math.abs(difference), .25, strafeD, this);
+            wheels.strafe(Math.abs(difference), .225, strafeD, this);
         }
 
         jewelbase.setPosition(.3);
@@ -139,14 +142,18 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(250);
 
         distanceFromKey = vu.getZ();
-        difference = (-distanceFromKey) - 370;
+
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -380.0;
+
+        difference = (-distanceFromKey) - 385;
         difference *= 0.0394;
 
         if(difference > 0) {
             strafeD = Direction.RIGHT;
         }
 
-        wheels.strafe(Math.abs(difference), .25, strafeD, this);
+        wheels.strafe(Math.abs(difference), .225, strafeD, this);
 
         Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 
@@ -183,15 +190,17 @@ public class CraptonRedRight extends LinearOpMode {
 
 
         float imageAngle = vu.getXAngle();
-        strafingDistance += vu.getAddDistance(imageAngle, 22);
+        strafingDistance += vu.getAddDistance(imageAngle, 40);
 
-        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 22) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
+        Log.d("[Phoenix-Adjustment]", "adjustment distance: " + vu.getAddDistance(imageAngle, 40) + ". image angle: " + imageAngle + ". newstrafingDistance: " + strafingDistance);
 
         wheels.drive(18, Direction.FORWARD, .4, this);
 
         Thread.sleep(1000);
 
-        wheels.strafe(strafingDistance, .5, Direction.LEFT, myImu, this);
+        double newDifference = difference - oldDifference;
+
+        wheels.strafe(strafingDistance + newDifference, .35, Direction.LEFT, myImu, this);
 
         Thread.sleep(250);
 
@@ -217,5 +226,7 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(1000);
 
         wheels.drive(3, Direction.BACKWARD, .5, this);
+
+        wheels.turnByIMU(130, .5, Direction.LEFT);
     }
 }

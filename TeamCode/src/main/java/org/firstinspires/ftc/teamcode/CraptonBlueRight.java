@@ -99,14 +99,21 @@ public class CraptonBlueRight extends LinearOpMode {
         double distanceFromKey = vu.getZ();
 
         Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+        double oldDistance = distanceFromKey;
+
         if(distanceFromKey == -9999.0)
-            distanceFromKey = -365.0;
+            distanceFromKey = -380.0;
 
-        Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
+        //Log.d("[Phoenix-vu-strafe]", "differenceFromKey: " + distanceFromKey);
 
 
-        double difference =(-distanceFromKey) - 370;
+        double difference =(-distanceFromKey) - 385;
         difference *= 0.0394;
+
+        telemetry.addData("old distance", oldDistance);
+        telemetry.addData("distanceFromKey", distanceFromKey);
+        telemetry.addData("difference", difference);
+        telemetry.update();
 
         Direction strafeD = Direction.RIGHT;
         if(difference > 0) {
@@ -114,7 +121,7 @@ public class CraptonBlueRight extends LinearOpMode {
         }
 
         if (strafeD == Direction.RIGHT){
-            wheels.strafe(Math.abs(difference), .2, strafeD, this);
+            wheels.strafe(Math.abs(difference), .225, strafeD, this);
         }
 
         Thread.sleep(500);
@@ -129,15 +136,15 @@ public class CraptonBlueRight extends LinearOpMode {
 
         distanceFromKey = vu.getZ();
         if(distanceFromKey == -9999.0)
-            distanceFromKey = -365.0;
+            distanceFromKey = -385.0;
 
-        difference = (-distanceFromKey) - 370;
+        difference = (-distanceFromKey) - 385;
         difference *= 0.0394;
 
         if(difference > 0)
             strafeD = Direction.LEFT;
 
-        wheels.strafe(Math.abs(difference), .2, strafeD, this);
+        wheels.strafe(Math.abs(difference), .225, strafeD, this);
 
         Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 

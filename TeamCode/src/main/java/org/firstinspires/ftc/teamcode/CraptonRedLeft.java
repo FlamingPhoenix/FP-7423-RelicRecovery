@@ -100,7 +100,12 @@ public class CraptonRedLeft extends LinearOpMode {
         Thread.sleep(1000);
 
         double distanceFromKey = vu.getZ();
+
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
         double difference =(-distanceFromKey) - 370;
+
         difference *= 0.0394;
 
         Direction strafeD = Direction.LEFT;
@@ -123,7 +128,12 @@ public class CraptonRedLeft extends LinearOpMode {
         Thread.sleep(500);
 
         distanceFromKey = vu.getZ();
+
+        if(distanceFromKey == -9999.0)
+            distanceFromKey = -365.0;
+
         difference = (-distanceFromKey) - 370;
+
         difference *= 0.0394;
 
         if(difference > 0) {

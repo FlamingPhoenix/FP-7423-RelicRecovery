@@ -449,16 +449,7 @@ public class Drive {
             bl.setPower(power);
         }
 
-        int waitTime = 150;
-
-        /*if(distanceFromKey == 2)
-            waitTime = 150;
-        else if(distanceFromKey == 12)
-            waitTime = 200;
-        else
-            waitTime = 200; */
-
-        opm.sleep(waitTime); //150 was too short. we should create a test to find optimal time
+        opm.sleep(150);
 
         fr.setPower(0);
         br.setPower(0);
