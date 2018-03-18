@@ -129,8 +129,10 @@ public class CraptonRedRight extends LinearOpMode {
 
         Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 
+        double stoneAdjustLeftDistance = 0;
         if (strafeD == Direction.LEFT){
             wheels.strafe(Math.abs(difference), .225, strafeD, this);
+            stoneAdjustLeftDistance = Math.abs(difference);
         }
 
         jewelbase.setPosition(.3);
@@ -149,11 +151,12 @@ public class CraptonRedRight extends LinearOpMode {
         difference = (-distanceFromKey) - 385;
         difference *= 0.0394;
 
+        double stoneAdjustmentRight = 0;
         if(difference > 0) {
             strafeD = Direction.RIGHT;
+            wheels.strafe(Math.abs(difference), .225, strafeD, this);
+            stoneAdjustmentRight = Math.abs(difference);
         }
-
-        wheels.strafe(Math.abs(difference), .225, strafeD, this);
 
         Log.d("[Phoenix-vu-strafe]", "distance to strafe: " + difference);
 
@@ -198,7 +201,7 @@ public class CraptonRedRight extends LinearOpMode {
 
         Thread.sleep(1000);
 
-        double newDifference = difference - oldDifference;
+        double newDifference = stoneAdjustmentRight- stoneAdjustLeftDistance;
 
         wheels.strafe(strafingDistance + newDifference, .35, Direction.LEFT, myImu, this);
 
