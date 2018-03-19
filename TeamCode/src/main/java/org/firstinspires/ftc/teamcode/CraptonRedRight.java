@@ -184,11 +184,11 @@ public class CraptonRedRight extends LinearOpMode {
         Thread.sleep(2000);
 
         if(vu.scanVuforia() == 1) {
-            strafingDistance = 2;
+            strafingDistance = 3;
         } else if(vu.scanVuforia() == 0) {
-            strafingDistance = 6.5;
+            strafingDistance = 7;
         } else if(vu.scanVuforia() == -1) {
-            strafingDistance = 12;
+            strafingDistance = 11;
         }
 
 
